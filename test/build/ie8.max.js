@@ -29,21 +29,30 @@ THE SOFTWARE.
     ONREADYSTATECHANGE = 'onreadystatechange',
     DOMCONTENTLOADED = 'DOMContentLoaded',
     SECRET = '__IE8__' + Math.random(),
+    Object = window.Object,
+    defineProperty = Object.defineProperty ||
+    // just in case ...
+    function (object, property, descriptor) {
+      object[property] = descriptor.value;
+    },
     defineProperties = Object.defineProperties ||
     // IE8 implemented defineProperty but not the plural...
     function (object, descriptors) {
       for(var key in descriptors) {
         if (hasOwnProperty.call(descriptors, key)) {
-          Object.defineProperty(object, key, descriptors[key]);
+          defineProperty(object, key, descriptors[key]);
         }
       }
     },
     hasOwnProperty = Object.prototype.hasOwnProperty,
+    // here IE7 will break like a charm
     ElementPrototype = window.Element.prototype,
     EventPrototype = window.Event.prototype,
     DocumentPrototype = window.HTMLDocument.prototype,
     WindowPrototype = window.Window.prototype,
+    // none of above native constructors exist/are exposed
     possiblyNativeEvent = /^[a-zA-Z]+$/,
+    // ^ actually could probably be just /^[a-z]+$/
     readyStateOK = /loaded|complete/,
     types = {}
   ;
@@ -92,7 +101,9 @@ THE SOFTWARE.
   }
 
   function onReadyState(e) {
-    if (!READYEVENTDISPATCHED) {
+    if (!READYEVENTDISPATCHED && readyStateOK.test(
+      document.readyState
+    )) {
       READYEVENTDISPATCHED = !READYEVENTDISPATCHED;
       document.detachEvent(ONREADYSTATECHANGE, onReadyState);
       e = document.createEvent('Event');
@@ -122,7 +133,7 @@ THE SOFTWARE.
           self = this,
           ontype = 'on' + type,
           temple =  self[SECRET] ||
-                      Object.defineProperty(
+                      defineProperty(
                         self, SECRET, {value: {}}
                       )[SECRET],
           currentType = temple[ontype] || (temple[ontype] = {}),
@@ -200,11 +211,6 @@ THE SOFTWARE.
   defineProperties(
     EventPrototype,
     {
-      /*
-      target: {get: function () {
-        return this.srcElement || document;
-      }},
-      */
       preventDefault: {value: function () {
         if (this.cancelable) {
           this.defaultPrevented = true;
