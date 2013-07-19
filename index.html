@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Ie8 : some damn DOM fix for this damned browser" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Ie8</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/WebReflection/ie8">View on GitHub</a>
+
+          <h1 id="project_title">Ie8</h1>
+          <h2 id="project_tagline">some damn DOM fix for this damned browser</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/WebReflection/ie8/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/WebReflection/ie8/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>
+<a name="ie8" class="anchor" href="#ie8"><span class="octicon octicon-link"></span></a>ie8</h1>
+
+<h3>
+<a name="in-a-nutshell" class="anchor" href="#in-a-nutshell"><span class="octicon octicon-link"></span></a>in a nutshell</h3>
+
+<ul>
+<li>
+<code>addEventListener</code>, <code>removeEventListener</code>, and <code>dispatchEvent</code> for IE8 <strong>including custom bubbling events</strong>
+</li>
+<li>
+<code>timeStamp</code>, <code>target</code>, and <code>currentTarget</code> properties per each event</li>
+<li>
+<code>document.createEvent('Event')</code> standard API  with <code>e.initEvent(type, bubbles, cancelable)</code> supported too</li>
+<li>
+<code>preventDefault()</code>, <code>stopPropagation()</code>, <code>stopImmediatePropagation()</code> working with both synthetic and real events</li>
+<li>
+<code>document.addEventListener('DOMContentLoaded', callback, false)</code> supported</li>
+</ul><p>that's pretty much it for now ... </p>
+
+<p><a href="test/ie8.js">current tests</a></p>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Ie8 maintained by <a href="https://github.com/WebReflection">WebReflection</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
