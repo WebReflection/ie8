@@ -78,9 +78,55 @@
   }
 
   defineProperties(
+    DocumentPrototype,
+    {
+      addEventListener: {value: function(type, handler, capture) {
+        var self = this;
+        if (window.console) {
+          console.log('DOCUMENT');
+          console.log(type);
+        }
+        ElementPrototype.addEventListener.call(self, type, handler, capture);
+        // NOTE:  it won't fire if already loaded, this is NOT a $.ready() shim!
+        //        this behaves just like standard browsers
+        if (
+          DUNNOABOUTDOMLOADED &&
+          type === 'DOMContentLoaded' &&
+          !/loaded|complete/.test(
+            self.readyState
+          )
+        ) {
+          DUNNOABOUTDOMLOADED = false;
+          (function gonna(e){try{
+            self.documentElement.doScroll('left');
+            e = self.createEvent('Event');
+            e.initEvent(type, true, true);
+            self.dispatchEvent(e);
+            }catch(o_O){
+            setTimeout(gonna, 50);
+          }}());
+        }
+      }},
+      dispatchEvent: {value: ElementPrototype.dispatchEvent},
+      removeEventListener: {value: ElementPrototype.removeEventListener},
+      createEvent: {value: function(Class){
+        var e;
+        if (Class !== 'Event') throw new Error('unsupported ' + Class);
+        e = document.createEventObject();
+        e.timeStamp = (new Date).getTime();
+        return e;
+      }}
+    }
+  );
+
+  defineProperties(
     ElementPrototype,
     {
       addEventListener: {value: function (type, handler, capture) {
+        if (window.console) {
+          console.log('ELEMENT');
+          console.log(type);
+        }
         var
           self = this,
           ontype = 'on' + type,
@@ -118,11 +164,6 @@
             }
           }
           currentType.n = types[ontype];
-        }
-        if (window.console) {
-          console.log(type);
-          console.log(find(handlers, handler));
-          console.log(handlers.join(', '));
         }
         if (find(handlers, handler) < 0) {
           handlers[capture ? 'unshift' : 'push'](handler);
@@ -191,43 +232,9 @@
     }
   );
 
-  defineProperties(
-    DocumentPrototype,
-    {
-      addEventListener: {value: function(type, handler, capture) {
-        var self = this;
-        ElementPrototype.addEventListener.call(self, type, handler, capture);
-        // NOTE:  it won't fire if already loaded, this is NOT a $.ready() shim!
-        //        this behaves just like standard browsers
-        if (
-          DUNNOABOUTDOMLOADED &&
-          type === 'DOMContentLoaded' &&
-          !/loaded|complete/.test(
-            self.readyState
-          )
-        ) {
-          DUNNOABOUTDOMLOADED = false;
-          (function gonna(e){try{
-            self.documentElement.doScroll('left');
-            e = self.createEvent('Event');
-            e.initEvent(type, true, true);
-            self.dispatchEvent(e);
-            }catch(o_O){
-            setTimeout(gonna, 50);
-          }}());
-        }
-      }},
-      dispatchEvent: {value: ElementPrototype.dispatchEvent},
-      removeEventListener: {value: ElementPrototype.removeEventListener},
-      createEvent: {value: function(Class){
-        var e;
-        if (Class !== 'Event') throw new Error('unsupported ' + Class);
-        e = document.createEventObject();
-        e.timeStamp = (new Date).getTime();
-        return e;
-      }}
-    }
-  );
+  if (window.console) {
+    console.log('---- DEFINED ONCE ----');
+  }
 
   defineProperties(
     WindowPrototype,
