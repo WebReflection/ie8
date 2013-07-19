@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', function(e){
     show(e);
     document.removeEventListener(e.type, this);
     // won't trigger anyway
-    document.dispatchEvent(E(e.type));
+    // document.dispatchEvent(E(e.type));
   }});
   this.documentElement.addEventListener('custom-event-name', show);
   this.body.innerHTML = 'OK, now try to click somewhere';
