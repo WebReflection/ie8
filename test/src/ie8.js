@@ -94,7 +94,7 @@
         ;
         if (!hasOwnProperty.call(currentType, 'w')) {
           currentType.w = function (e) {
-            return commonEventLoop(self, verify(e), handlers);
+            return e[SECRET] || commonEventLoop(self, verify(e), handlers);
           };
           // if not detected yet
           if (!hasOwnProperty.call(types, ontype)) {
@@ -105,7 +105,11 @@
                 // TODO:  should I consider tagName too so that
                 //        INPUT[ontype] could be different ?
                 e = document.createEventObject();
-                self.cloneNode(true).fireEvent(ontype, e);
+                // do not clone ever a node
+                // specially a document one ... 
+                e[SECRET] = true;
+                // use the secret to ignore them all
+                self.fireEvent(ontype, e);
                 types[ontype] = true;
                 self.attachEvent(ontype, currentType.w);
               } catch(e) {
