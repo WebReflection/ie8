@@ -42,7 +42,7 @@
 <code>addEventListener</code>, <code>removeEventListener</code>, and <code>dispatchEvent</code> for IE8 <strong>including custom bubbling events</strong>
 </li>
 <li>
-<code>timeStamp</code>, <code>target</code>, and <code>currentTarget</code> properties per each event</li>
+<code>timeStamp</code>, <code>cancelable</code>, <code>bubbles</code>, <code>target</code>, and <code>currentTarget</code> properties per each event</li>
 <li>
 <code>document.createEvent('Event')</code> standard API  with <code>e.initEvent(type, bubbles, cancelable)</code> supported too</li>
 <li>
@@ -75,6 +75,28 @@
 <p>The file can be either the <a href="build/ie8.max.js">full version</a> or <a href="build/ie8.js">the minified one</a> and could be placed before or after some third parts library accordingly with compatibility.</p>
 
 <h3>
+<a name="w3c-dom-level-2" class="anchor" href="#w3c-dom-level-2"><span class="octicon octicon-link"></span></a>W3C DOM Level 2</h3>
+
+<p>This polyfill normalize the <a href="http://www.w3.org/TR/DOM-Level-2-Events/events.html#Events-Registration-interfaces">EventTarget interface</a> for every node.</p>
+
+<p>This shim normalizes the DOM Level 2 <a href="http://www.w3.org/TR/DOM-Level-2-Events/events.html#Events-interface">Event interface</a> too, adding an <strong>extra</strong> DOM Level 3 <a href="http://www.w3.org/TR/DOM-Level-3-Events/#events-event-type-stopImmediatePropagation">.stopImmediatePropagation()</a> as bonus.</p>
+
+<h3>
+<a name="known-gotchas" class="anchor" href="#known-gotchas"><span class="octicon octicon-link"></span></a>known gotchas</h3>
+
+<p>Here a humble list of things what won't probably ever be fixed in IE8</p>
+
+<ul>
+<li>a standard capturing phase. The logic involved to pause a synthetic or DOM event, capture up, and re-dispatch top-down is probably not worth it the time and the size of the code. Right now if the <code>useCapture</code> flag is used, the event is prepended instead of appended simulating somehow the 99% of the time <em>reason</em> we might opt for the <code>capture</code> phase, being this usually slower too so it's a good practice, in any case, to <code>.stopPropagation()</code> on capture.</li>
+<li>not supported events <code>DOMContentLoaded</code> a part. As events might exist and might not exist in any browser out there, it does not make sense to fix them here. However, this polyfill provides all needed tools to fix special events through a powerful, custom events compatible, W3C standard API</li>
+</ul><h3>
+<a name="possible-troubleshooting" class="anchor" href="#possible-troubleshooting"><span class="octicon octicon-link"></span></a>possible troubleshooting</h3>
+
+<p>Some library could do weak features detection and decide the browser is IE8 regardless and threat it like that, some other might assume since this stuff is there and working much more should be possible too.</p>
+
+<p>Well, in 4 years of problems and counting, I have no idea about how many libraries still do work arounds for IE8 but if your libraries are ignoring such browser you might want to add this file regardless and probably find IE8 automagically fixed for all your JS needs.</p>
+
+<h3>
 <a name="about" class="anchor" href="#about"><span class="octicon octicon-link"></span></a>about</h3>
 
 <p>The very first thought I had about this project was: <em>how the hack is possible nobody had gone down this road before?</em></p>
@@ -86,12 +108,17 @@ If you have any specific request please file a feature request (or a bug) in the
 
 <p>Thanks for your contribution and your understanding.</p>
 
-<h3>
-<a name="troubleshooting" class="anchor" href="#troubleshooting"><span class="octicon octicon-link"></span></a>troubleshooting</h3>
+<h2>
+<a name="author" class="anchor" href="#author"><span class="octicon octicon-link"></span></a>author</h2>
 
-<p>Some library could do weak features detection and decide the browser is IE8 regardless and threat it like that, some other might assume since this stuff is there and working much more should be possible too.</p>
-
-<p>Well, in 4 years of problems and counting, I have no idea about how many libraries still do work arounds for IE8 but if your libraries are ignoring such browser you might want to add this file regardless and probably find IE8 automagically fixed for all your JS needs.</p>
+<table>
+<thead><tr>
+<th><a href="http://twitter.com/WebReflection" title="Follow @WebReflection on Twitter"><img src="http://www.3site.eu/graphic/blogspot_profile.gif" alt="twitter/WebReflection"></a></th>
+</tr></thead>
+<tbody><tr>
+<td><a href="http://webreflection.blogspot.com/">Andrea Giammarchi</a></td>
+</tr></tbody>
+</table>
       </section>
     </div>
 
