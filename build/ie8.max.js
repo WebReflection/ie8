@@ -20,7 +20,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 */
-var main = (function(window){
+(function(window){
   /*! (C) WebReflection Mit Style License */
   if (document.createEvent) return;
   var
@@ -281,5 +281,4 @@ var main = (function(window){
       }}
     }
   );
-
-}(this));;
+}(this));

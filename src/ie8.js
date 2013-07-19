@@ -1,4 +1,4 @@
-(function(window){
+
   /*! (C) WebReflection Mit Style License */
   if (document.createEvent) return;
   var
@@ -259,5 +259,3 @@
       }}
     }
   );
-
-}(this));
