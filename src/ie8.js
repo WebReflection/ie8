@@ -50,24 +50,6 @@
     ;
   }
 
-  function dispatch(self, e, bubbles) {
-    var
-      ontype = 'on' + e.type,
-      temple =  self[SECRET],
-      currentType = temple && temple[ontype],
-      valid = !!currentType
-    ;
-    return (valid && currentType.n) ?
-      self.fireEvent(ontype, e) : (
-        valid && commonEventLoop(
-          self,
-          (e._target = self) && e,
-          currentType.h,
-          bubbles
-        )
-      );
-  }
-
   function enrich(e, currentTarget) {
     if (!e.currentTarget) {
       e.currentTarget = currentTarget;
@@ -112,7 +94,7 @@
         ;
         if (!hasOwnProperty.call(currentType, 'w')) {
           currentType.w = function (e) {
-            return commonEventLoop(self, verify(e), handlers);
+            return e[SECRET] || commonEventLoop(self, verify(e), handlers);
           };
           // if not detected yet
           if (!hasOwnProperty.call(types, ontype)) {
@@ -123,7 +105,8 @@
                 // TODO:  should I consider tagName too so that
                 //        INPUT[ontype] could be different ?
                 e = document.createEventObject();
-                self.cloneNode(true).fireEvent(ontype, e);
+                e[SECRET] = true;
+                self.fireEvent(ontype, e);
                 types[ontype] = true;
                 self.attachEvent(ontype, currentType.w);
               } catch(e) {
@@ -142,7 +125,22 @@
         }
       }},
       dispatchEvent: {value: function (e) {
-        return dispatch(this, e, true);
+        var
+          self = this,
+          ontype = 'on' + e.type,
+          temple =  self[SECRET],
+          currentType = temple && temple[ontype],
+          valid = !!currentType
+        ;
+        return (valid && currentType.n) ?
+          self.fireEvent(ontype, e) : (
+            valid && commonEventLoop(
+              self,
+              (e._target = self) && e,
+              currentType.h,
+              true
+            )
+          );
       }},
       removeEventListener: {value: function (type, handler, capture) {
         var
@@ -209,7 +207,7 @@
             self.documentElement.doScroll('left');
             e = self.createEvent('Event');
             e.initEvent(type, true, true);
-            dispatch(self, e, false);
+            self.dispatchEvent(e);
             }catch(o_O){
             setTimeout(gonna, 50);
           }}());
