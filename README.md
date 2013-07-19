@@ -11,4 +11,4 @@ ie8
 
 that's pretty much it for now ... 
 
-[current tests](test/ie8.js)
+[current tests file](test/ie8.js) and [live test page](http://webreflection.github.io/ie8/test/)
