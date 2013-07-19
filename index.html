@@ -52,6 +52,46 @@
 </ul><p>that's pretty much it for now ... </p>
 
 <p><a href="test/ie8.js">current tests file</a> and <a href="http://webreflection.github.io/ie8/test/">live test page</a></p>
+
+<h3>
+<a name="how-to-include-the-project" class="anchor" href="#how-to-include-the-project"><span class="octicon octicon-link"></span></a>how to include the project</h3>
+
+<p>Here a page example</p>
+
+<div class="highlight"><pre><span class="cp">&lt;!doctype html&gt;</span>
+<span class="nt">&lt;html&gt;</span>
+  <span class="nt">&lt;head&gt;</span>
+    <span class="nt">&lt;title&gt;</span>ie8<span class="nt">&lt;/title&gt;</span>
+    <span class="c">&lt;!--[if IE 8]&gt;&lt;script src="ie8.js"&gt;&lt;/script&gt;&lt;![endif]--&gt;</span>
+    <span class="nt">&lt;script&gt;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">'load'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">alert</span><span class="p">(</span><span class="s1">'Hello Standards'</span><span class="p">);</span>
+    <span class="p">});</span>
+    <span class="nt">&lt;/script&gt;</span>
+  <span class="nt">&lt;/head&gt;</span>
+<span class="nt">&lt;/html&gt;</span>
+</pre></div>
+
+<p>The file can be either the <a href="build/ie8.max.js">full version</a> or <a href="build/ie8.js">the minified one</a> and could be placed before or after some third parts library accordingly with compatibility.</p>
+
+<h3>
+<a name="about" class="anchor" href="#about"><span class="octicon octicon-link"></span></a>about</h3>
+
+<p>The very first thought I had about this project was: <em>how the hack is possible nobody had gone down this road before?</em></p>
+
+<p>I am still thinking the same so ... there might be many things this polyfill is not fixing (yet).
+If you have any specific request please file a feature request (or a bug) in the proper section.</p>
+
+<p>It's about IE8 so I am expecting 23456789065123456789 tickets about problems each day so probably only most relevant will be considered due the amount of time it might take.</p>
+
+<p>Thanks for your contribution and your understanding.</p>
+
+<h3>
+<a name="troubleshooting" class="anchor" href="#troubleshooting"><span class="octicon octicon-link"></span></a>troubleshooting</h3>
+
+<p>Some library could do weak features detection and decide the browser is IE8 regardless and threat it like that, some other might assume since this stuff is there and working much more should be possible too.</p>
+
+<p>Well, in 4 years of problems and counting, I have no idea about how many libraries still do work arounds for IE8 but if your libraries are ignoring such browser you might want to add this file regardless and probably find IE8 automagically fixed for all your JS needs.</p>
       </section>
     </div>
 
