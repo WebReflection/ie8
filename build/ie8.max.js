@@ -114,7 +114,7 @@ THE SOFTWARE.
           handlers  = currentType.h || (currentType.h = []),
           e
         ;
-        if (!currentType.w) {
+        if (!hasOwnProperty.call(currentType, 'w')) {
           currentType.w = function (e) {
             return commonEventLoop(self, verify(e), handlers);
           };
@@ -140,6 +140,11 @@ THE SOFTWARE.
             }
           }
           currentType.n = types[ontype];
+        }
+        if (window.console) {
+          console.log(type);
+          console.log(find(handlers, handler));
+          console.log(handlers.join(', '));
         }
         if (find(handlers, handler) < 0) {
           handlers[capture ? 'unshift' : 'push'](handler);
