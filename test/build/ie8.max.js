@@ -39,7 +39,9 @@ var main = (function(window){
     ElementPrototype = window.Element.prototype,
     EventPrototype = window.Event.prototype,
     DocumentPrototype = window.HTMLDocument.prototype,
-    WindowPrototype = window.Window.prototype
+    WindowPrototype = window.Window.prototype,
+    possiblyNativeEvent = /^[a-zA-Z]+$/,
+    types = {}
   ;
 
   function commonEventLoop(currentTarget, e, $handlers, bubbles) {
@@ -116,14 +118,28 @@ var main = (function(window){
           currentType.w = function (e) {
             return commonEventLoop(self, verify(e), handlers);
           };
-          try {
-            e = document.createEventObject();
-            self.cloneNode(true).fireEvent(ontype, e);
-            currentType.n = true;
-            self.attachEvent(ontype, currentType.w);
-          } catch(e) {
-            currentType.n = false;
+          // if not detected yet
+          if (!hasOwnProperty.call(types, ontype)) {
+            // and potentially a native event
+            if(possiblyNativeEvent.test(type)) {
+              // do this heavy thing
+              try {
+                // TODO:  should I consider tagName too so that
+                //        INPUT[ontype] could be different ?
+                e = document.createEventObject();
+                self.cloneNode(true).fireEvent(ontype, e);
+                types[ontype] = true;
+                self.attachEvent(ontype, currentType.w);
+              } catch(e) {
+                types[ontype] = false;
+              }
+            } else {
+              // no need to bother since
+              // 'x-event' ain't native for sure
+              types[ontype] = false;
+            }
           }
+          currentType.n = types[ontype];
         }
         if (find(handlers, handler) < 0) {
           handlers[capture ? 'unshift' : 'push'](handler);
@@ -198,6 +214,8 @@ var main = (function(window){
       addEventListener: {value: function(type, handler, capture) {
         var self = this;
         ElementPrototype.addEventListener.call(self, type, handler, capture);
+        // NOTE:  it won't fire if already loaded, this is NOT a $.ready() shim!
+        //        this behaves just like standard browsers
         if (
           DUNNOABOUTDOMLOADED &&
           type === 'DOMContentLoaded' &&
