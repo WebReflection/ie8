@@ -19,9 +19,9 @@ AMD = $(VAR)
 build:
 	make clean
 	make var
-	make node
-	make amd
-	make test
+#	make node
+#	make amd
+#	make test
 #	make hint
 	make size
 

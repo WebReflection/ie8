@@ -1,1 +1,245 @@
-{}
+(function(window){
+  /*! (C) WebReflection Mit Style License */
+  if (document.createEvent) return;
+  var
+    DUNNOABOUTDOMLOADED = true,
+    SECRET = '__IE8__' + Math.random(),
+    defineProperties = Object.defineProperties ||
+    // IE8 implemented defineProperty but not the plural...
+    function (object, descriptors) {
+      for(var key in descriptors) {
+        if (hasOwnProperty.call(descriptors, key)) {
+          Object.defineProperty(object, key, descriptors[key]);
+        }
+      }
+    },
+    hasOwnProperty = Object.prototype.hasOwnProperty,
+    ElementPrototype = window.Element.prototype,
+    EventPrototype = window.Event.prototype,
+    DocumentPrototype = window.HTMLDocument.prototype,
+    WindowPrototype = window.Window.prototype
+  ;
+
+  function commonEventLoop(currentTarget, e, $handlers, bubbles) {
+    for(var
+      handler,
+      evt = enrich(e, currentTarget),
+      handlers = $handlers.slice(),
+      i = 0, length = handlers.length; i < length; i++
+    ) {
+      handler = handlers[i];
+      if (
+        typeof handler === 'object' &&
+        typeof handler.handleEvent === 'function'
+      ) {
+        handler.handleEvent(evt);
+      } else {
+        handler.call(currentTarget, evt);
+      }
+      if (evt.stoppedImmediatePropagation) break;
+    }
+    return (
+      bubbles &&
+      !evt.stoppedPropagation &&
+      currentTarget.parentNode
+    ) ?
+      currentTarget.parentNode.dispatchEvent(evt) :
+      !evt.defaultPrevented
+    ;
+  }
+
+  function enrich(e, currentTarget) {
+    if (!e.currentTarget) {
+      e.currentTarget = currentTarget;
+    }
+    e.eventPhase = (
+      // AT_TARGET : BUBBLING_PHASE
+      (e.target || e._target) === e.currentTarget ? 2 : 3
+    );
+    return e;
+  }
+
+  function find(array, value) {
+    var i = array.length;
+    while(i-- && array[i] !== value);
+    return i;
+  }
+
+  function verify(e) {
+    if (!e) {
+      e = window.event;
+    }
+    if (!e.timeStamp) {
+      e.timeStamp = (new Date).getTime();
+    }
+    return e;
+  }
+
+  defineProperties(
+    ElementPrototype,
+    {
+      addEventListener: {value: function (type, handler, capture) {
+        var
+          self = this,
+          ontype = 'on' + type,
+          temple =  self[SECRET] ||
+                      Object.defineProperty(
+                        self, SECRET, {value: {}}
+                      )[SECRET],
+          currentType = temple[ontype] || (temple[ontype] = {}),
+          handlers  = currentType.h || (currentType.h = []),
+          e
+        ;
+        if (!currentType.w) {
+          currentType.w = function (e) {
+            return commonEventLoop(self, verify(e), handlers);
+          };
+          try {
+            e = document.createEventObject();
+            self.cloneNode(true).fireEvent(ontype, e);
+            currentType.n = true;
+            self.attachEvent(ontype, currentType.w);
+          } catch(e) {
+            currentType.n = false;
+          }
+        }
+        if (find(handlers, handler) < 0) {
+          handlers[capture ? 'unshift' : 'push'](handler);
+        }
+      }},
+      dispatchEvent: {value: function (e) {
+        var
+          self = this,
+          ontype = 'on' + e.type,
+          temple =  self[SECRET],
+          currentType = temple && temple[ontype],
+          valid = !!currentType
+        ;
+        return (valid && currentType.n) ?
+          self.fireEvent(ontype, e) : (
+            valid && commonEventLoop(
+              self,
+              (e._target = self) && e,
+              currentType.h,
+              true
+            )
+          );
+      }},
+      removeEventListener: {value: function (type, handler, capture) {
+        var
+          self = this,
+          ontype = 'on' + type,
+          temple =  self[SECRET],
+          currentType = temple && temple[ontype],
+          handlers = currentType && currentType.h,
+          i = handlers ? find(handlers, handler) : -1
+        ;
+        if (-1 < i) handlers.splice(i, 1);
+      }}
+    }
+  );
+
+  defineProperties(
+    EventPrototype,
+    {
+      target: {get: function () {
+        return this.srcElement;
+      }},
+      preventDefault: {value: function () {
+        if (this.cancelable) {
+          this.defaultPrevented = true;
+          this.returnValue = false;
+        }
+      }},
+      stopPropagation: {value: function () {
+        this.stoppedPropagation = true;
+        this.cancelBubble = true;
+      }},
+      stopImmediatePropagation: {value: function () {
+        this.stoppedImmediatePropagation = true;
+        this.stopPropagation();
+      }},
+      initEvent: {value: function(type, bubbles, cancelable){
+        this.type = type;
+        this.bubbles = !!bubbles;
+        this.cancelable = !!cancelable;
+        if (!this.bubbles) {
+          this.stopPropagation();
+        }
+      }}
+    }
+  );
+
+  defineProperties(
+    DocumentPrototype,
+    {
+      addEventListener: {value: function(type, handler, capture) {
+        var self = this;
+        ElementPrototype.addEventListener.call(self, type, handler, capture);
+        if (
+          DUNNOABOUTDOMLOADED &&
+          type === 'DOMContentLoaded' &&
+          !/loaded|complete/.test(
+            self.readyState
+          )
+        ) {
+          DUNNOABOUTDOMLOADED = false;
+          (function gonna(e){try{
+            self.documentElement.doScroll('left');
+            e = self.createEvent('Event');
+            e.initEvent(type, true, true);
+            self.dispatchEvent(e);
+            }catch(o_O){
+            setTimeout(gonna, 50);
+          }}());
+        }
+      }},
+      dispatchEvent: {value: ElementPrototype.dispatchEvent},
+      removeEventListener: {value: ElementPrototype.removeEventListener},
+      createEvent: {value: function(Class){
+        var e;
+        if (Class !== 'Event') throw new Error('unsupported ' + Class);
+        e = document.createEventObject();
+        e.timeStamp = (new Date).getTime();
+        return e;
+      }}
+    }
+  );
+
+  defineProperties(
+    WindowPrototype,
+    {
+      addEventListener: {value: function (type, handler, capture) {
+        var
+          self = window,
+          ontype = 'on' + type,
+          handlers
+        ;
+        if (!self[ontype]) {
+          self[ontype] = function(e) {
+            return commonEventLoop(self, verify(e), handlers);
+          };
+        }
+        handlers = self[ontype][SECRET] || (
+          self[ontype][SECRET] = []
+        );
+        if (find(handlers, handler) < 0) {
+          handlers[capture ? 'unshift' : 'push'](handler);
+        }
+      }},
+      dispatchEvent: {value: function (e) {
+        var method = window['on' + e.type];
+        return method ? method.call(window, e) : false;
+      }},
+      removeEventListener: {value: function (type, handler, capture) {
+        var
+          ontype = 'on' + type,
+          handlers = (window[ontype] || Object)[SECRET],
+          i = handlers ? find(handlers, handler) : -1
+         ;
+        if (-1 < i) handlers.splice(i, 1);
+      }}
+    }
+  );
+
+}(this));
