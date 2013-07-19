@@ -72,6 +72,24 @@ THE SOFTWARE.
     ;
   }
 
+  function dispatch(self, e, bubbles) {
+    var
+      ontype = 'on' + e.type,
+      temple =  self[SECRET],
+      currentType = temple && temple[ontype],
+      valid = !!currentType
+    ;
+    return (valid && currentType.n) ?
+      self.fireEvent(ontype, e) : (
+        valid && commonEventLoop(
+          self,
+          (e._target = self) && e,
+          currentType.h,
+          bubbles
+        )
+      );
+  }
+
   function enrich(e, currentTarget) {
     if (!e.currentTarget) {
       e.currentTarget = currentTarget;
@@ -146,22 +164,7 @@ THE SOFTWARE.
         }
       }},
       dispatchEvent: {value: function (e) {
-        var
-          self = this,
-          ontype = 'on' + e.type,
-          temple =  self[SECRET],
-          currentType = temple && temple[ontype],
-          valid = !!currentType
-        ;
-        return (valid && currentType.n) ?
-          self.fireEvent(ontype, e) : (
-            valid && commonEventLoop(
-              self,
-              (e._target = self) && e,
-              currentType.h,
-              true
-            )
-          );
+        return dispatch(this, e, true);
       }},
       removeEventListener: {value: function (type, handler, capture) {
         var
@@ -228,7 +231,7 @@ THE SOFTWARE.
             self.documentElement.doScroll('left');
             e = self.createEvent('Event');
             e.initEvent(type, true, true);
-            self.dispatchEvent(e);
+            dispatch(self, e, false);
             }catch(o_O){
             setTimeout(gonna, 50);
           }}());

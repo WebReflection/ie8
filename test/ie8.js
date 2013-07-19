@@ -1,4 +1,4 @@
-// if included as external script ... it fails ... 
+
 document.addEventListener('DOMContentLoaded', function(e){
   function E(type) {
     var e = document.createEvent('Event');

@@ -6,40 +6,15 @@
         <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
         <meta name="apple-mobile-web-app-capable" content="yes"/>
         <meta names="apple-mobile-web-app-status-bar-style" content="black"/>
+        <!--[if IE 8]><script src="ie8.js"></script><![endif]-->
+        <script src="test/ie8.js"></script>
+        <!--
         <script>
           document.write('<script src="build/ie8.max.js?' + Math.random() +'"><' + '/script>');
-        </script>
-        <script>
-        document.addEventListener('DOMContentLoaded', function(e){
-          function E(type) {
-            var e = document.createEvent('Event');
-            e.initEvent(type, true, true);
-            return e;
-          }
-          function show(e) {
-            alert([
-              'type: ' + e.type,
-              'timeStamp: ' + e.timeStamp,
-              'eventPhase: ' + e.eventPhase,
-              'e.currentTarget: ' + e.currentTarget
-            ].join('\n'));
-          }
-          show(e);
-          this.addEventListener('custom-event-name', {handleEvent:function (e) {
-            show(e);
-            document.removeEventListener(e.type, this);
-            // won't trigger anyway
-            document.dispatchEvent(E(e.type));
-          }});
-          this.documentElement.addEventListener('custom-event-name', show);
-          this.body.innerHTML = 'OK, now try to click somewhere';
-          this.documentElement.addEventListener('click', function (e) {
-            show(e);
-            this.dispatchEvent(E('custom-event-name'));
-          });
-        });
+          document.write('<script src="test/ie8.js?' + Math.random() +'"><' + '/script>');
         </script>
         <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        -->
         <style type="text/css">
 #wru {
     font-family: sans-serif;
