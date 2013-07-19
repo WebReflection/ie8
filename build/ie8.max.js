@@ -127,7 +127,10 @@ THE SOFTWARE.
                 // TODO:  should I consider tagName too so that
                 //        INPUT[ontype] could be different ?
                 e = document.createEventObject();
+                // do not clone ever a node
+                // specially a document one ... 
                 e[SECRET] = true;
+                // use the secret to ignore them all
                 self.fireEvent(ontype, e);
                 types[ontype] = true;
                 self.attachEvent(ontype, currentType.w);
