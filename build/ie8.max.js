@@ -25,6 +25,9 @@ THE SOFTWARE.
   if (document.createEvent) return;
   var
     DUNNOABOUTDOMLOADED = true,
+    READYEVENTDISPATCHED = false,
+    ONREADYSTATECHANGE = 'onreadystatechange',
+    DOMCONTENTLOADED = 'DOMContentLoaded',
     SECRET = '__IE8__' + Math.random(),
     defineProperties = Object.defineProperties ||
     // IE8 implemented defineProperty but not the plural...
@@ -41,6 +44,7 @@ THE SOFTWARE.
     DocumentPrototype = window.HTMLDocument.prototype,
     WindowPrototype = window.Window.prototype,
     possiblyNativeEvent = /^[a-zA-Z]+$/,
+    readyStateOK = /loaded|complete/,
     types = {}
   ;
 
@@ -73,12 +77,10 @@ THE SOFTWARE.
   }
 
   function enrich(e, currentTarget) {
-    if (!e.currentTarget) {
-      e.currentTarget = currentTarget;
-    }
+    e.currentTarget = currentTarget;
     e.eventPhase = (
       // AT_TARGET : BUBBLING_PHASE
-      (e.target || e._target) === e.currentTarget ? 2 : 3
+      e.target === e.currentTarget ? 2 : 3
     );
     return e;
   }
@@ -89,9 +91,22 @@ THE SOFTWARE.
     return i;
   }
 
-  function verify(e) {
+  function onReadyState(e) {
+    if (!READYEVENTDISPATCHED) {
+      READYEVENTDISPATCHED = !READYEVENTDISPATCHED;
+      document.detachEvent(ONREADYSTATECHANGE, onReadyState);
+      e = document.createEvent('Event');
+      e.initEvent(DOMCONTENTLOADED, true, true);
+      document.dispatchEvent(e);
+    }
+  }
+
+  function verify(self, e) {
     if (!e) {
       e = window.event;
+    }
+    if (!e.target) {
+      e.target = e.srcElement || e.fromElement || document;
     }
     if (!e.timeStamp) {
       e.timeStamp = (new Date).getTime();
@@ -116,7 +131,7 @@ THE SOFTWARE.
         ;
         if (!hasOwnProperty.call(currentType, 'w')) {
           currentType.w = function (e) {
-            return e[SECRET] || commonEventLoop(self, verify(e), handlers);
+            return e[SECRET] || commonEventLoop(self, verify(self, e), handlers);
           };
           // if not detected yet
           if (!hasOwnProperty.call(types, ontype)) {
@@ -157,11 +172,12 @@ THE SOFTWARE.
           currentType = temple && temple[ontype],
           valid = !!currentType
         ;
+        if (!e.target) e.target = self;
         return (valid && currentType.n) ?
           self.fireEvent(ontype, e) : (
             valid && commonEventLoop(
               self,
-              (e._target = self) && e,
+              e,
               currentType.h,
               true
             )
@@ -184,9 +200,11 @@ THE SOFTWARE.
   defineProperties(
     EventPrototype,
     {
+      /*
       target: {get: function () {
-        return this.srcElement;
+        return this.srcElement || document;
       }},
+      */
       preventDefault: {value: function () {
         if (this.cancelable) {
           this.defaultPrevented = true;
@@ -222,20 +240,21 @@ THE SOFTWARE.
         //        this behaves just like standard browsers
         if (
           DUNNOABOUTDOMLOADED &&
-          type === 'DOMContentLoaded' &&
-          !/loaded|complete/.test(
+          type === DOMCONTENTLOADED &&
+          !readyStateOK.test(
             self.readyState
           )
         ) {
           DUNNOABOUTDOMLOADED = false;
-          (function gonna(e){try{
-            self.documentElement.doScroll('left');
-            e = self.createEvent('Event');
-            e.initEvent(type, true, true);
-            self.dispatchEvent(e);
-            }catch(o_O){
-            setTimeout(gonna, 50);
-          }}());
+          self.attachEvent(ONREADYSTATECHANGE, onReadyState);
+          if (window == top) {
+            (function gonna(e){try{
+              self.documentElement.doScroll('left');
+              onReadyState();
+              }catch(o_O){
+              setTimeout(gonna, 50);
+            }}());
+          }
         }
       }},
       dispatchEvent: {value: ElementPrototype.dispatchEvent},
@@ -261,7 +280,7 @@ THE SOFTWARE.
         ;
         if (!self[ontype]) {
           self[ontype] = function(e) {
-            return commonEventLoop(self, verify(e), handlers);
+            return commonEventLoop(self, verify(self, e), handlers);
           };
         }
         handlers = self[ontype][SECRET] || (

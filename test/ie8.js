@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', function(e){
       'type: ' + e.type,
       'timeStamp: ' + e.timeStamp,
       'eventPhase: ' + e.eventPhase,
+      'e.target: ' + e.target,
       'e.currentTarget: ' + e.currentTarget
     ].join('\n'));
   }
