@@ -21,7 +21,7 @@ Here a page example
 <html>
   <head>
     <title>ie8</title>
-    <!--[if lt IE 9]><script src="ie8.js"></script><![endif]-->
+    <!--[if IE 8]><script src="ie8.js"></script><![endif]-->
     <script>
     this.addEventListener('load', function(e) {
       alert('Hello Standards');
