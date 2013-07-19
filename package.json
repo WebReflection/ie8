@@ -1,0 +1,22 @@
+{
+  "version": "0.0.0",
+  "name": "ie8",
+  "description": "",
+  "homepage": "https://github.com/WebReflection/ie8",
+  "keywords": [],
+  "author": {
+    "name": "",
+    "web": ""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/WebReflection/ie8.git"
+  },
+  "main": "./build/ie8.node.js",
+  "scripts": {
+    "test": "node test/.test.js"
+  },
+  "dependencies": {
+    "wru": ">= 0.0.0"
+  }
+}
