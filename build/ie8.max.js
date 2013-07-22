@@ -79,8 +79,6 @@ THE SOFTWARE.
       !evt.stoppedPropagation &&
       currentTarget.parentNode
     ) ?
-      // TODO: commonEventLoop(currentTarget.parentNode, evt, /* retrieve handlers */, bubbles) :
-      // NOTE: if the node is not in the DOM should NOT bubble to parent
       currentTarget.parentNode.dispatchEvent(evt) :
       !evt.defaultPrevented
     ;
