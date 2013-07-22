@@ -35,11 +35,10 @@
     types = {}
   ;
 
-  function commonEventLoop(currentTarget, e, $handlers, bubbles) {
+  function commonEventLoop(currentTarget, e, $handlers, synthetic) {
     for(var
-      handler,
-      evt = enrich(e, currentTarget),
       handlers = $handlers.slice(),
+      evt = enrich(e, currentTarget),
       i = 0, length = handlers.length; i < length; i++
     ) {
       handler = handlers[i];
@@ -54,10 +53,12 @@
       if (evt.stoppedImmediatePropagation) break;
     }
     return (
-      bubbles &&
+      synthetic &&
       !evt.stoppedPropagation &&
       currentTarget.parentNode
     ) ?
+      // TODO: commonEventLoop(currentTarget.parentNode, evt, /* retrieve handlers */, bubbles) :
+      // NOTE: if the node is not in the DOM should NOT bubble to parent
       currentTarget.parentNode.dispatchEvent(evt) :
       !evt.defaultPrevented
     ;
@@ -120,7 +121,9 @@
         ;
         if (!hasOwnProperty.call(currentType, 'w')) {
           currentType.w = function (e) {
-            return e[SECRET] || commonEventLoop(self, verify(self, e), handlers);
+            // e[SECRET] is a silent notification needed to avoid
+            // fired events during live test
+            return e[SECRET] || commonEventLoop(self, verify(self, e), handlers, false);
           };
           // if not detected yet
           if (!hasOwnProperty.call(types, ontype)) {
@@ -159,18 +162,24 @@
           ontype = 'on' + e.type,
           temple =  self[SECRET],
           currentType = temple && temple[ontype],
-          valid = !!currentType
+          valid = !!currentType,
+          parentNode
         ;
         if (!e.target) e.target = self;
-        return (valid && currentType.n) ?
-          self.fireEvent(ontype, e) : (
-            valid && commonEventLoop(
+        return valid ? (
+          currentType.n ?
+            self.fireEvent(ontype, e) :
+            commonEventLoop(
               self,
               e,
               currentType.h,
               true
             )
-          );
+        ) : !!(
+          (parentNode = self.parentNode) &&
+          (self.nodeType !== 9 && document.documentElement.contains(self)) &&
+          parentNode.dispatchEvent(e)
+        );
       }},
       removeEventListener: {value: function (type, handler, capture) {
         var
@@ -264,7 +273,7 @@
         ;
         if (!self[ontype]) {
           self[ontype] = function(e) {
-            return commonEventLoop(self, verify(self, e), handlers);
+            return commonEventLoop(self, verify(self, e), handlers, false);
           };
         }
         handlers = self[ontype][SECRET] || (
