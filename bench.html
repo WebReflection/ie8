@@ -15,12 +15,10 @@
             cursor: default;
         }
         </style>
-    </head>
-    <body>
-        <div></div>
         <script>
-        (function(div){
-          var type = 'x:increment',
+        this.onload = function () {
+          var div = document.getElementsByTagName('div')[0],
+              type = 'x:increment',
               times = 0,
               start;
           function dispatch(){
@@ -29,17 +27,16 @@
             div.dispatchEvent(e);
           }
           function increment(e) {
-            if (!times++) {
-              start = (new Date).getTime();
-            } else if (1000 < ((new Date).getTime() - start)) {
-              div.innerHTML = times + ' synthetic triggers per second';
-              times = 0;
-            }
-            setTimeout(dispatch, 10);
+            times++;
           }
           div.addEventListener(type, increment);
-          increment();
-        }(document.getElementsByTagName('div')[0]));
+          start = (new Date).getTime();
+          while((new Date).getTime() - start < 1000) dispatch();
+          div.innerHTML = 'Dispatched about ' + times + ' times per second.';
+        };
         </script>
+    </head>
+    <body>
+        <div></div>
     </body>
 </html>

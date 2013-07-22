@@ -29,14 +29,16 @@
     DocumentPrototype = window.HTMLDocument.prototype,
     WindowPrototype = window.Window.prototype,
     // none of above native constructors exist/are exposed
-    possiblyNativeEvent = /^[a-zA-Z]+$/,
+    possiblyNativeEvent = /^[a-z]+$/,
     // ^ actually could probably be just /^[a-z]+$/
     readyStateOK = /loaded|complete/,
-    types = {}
+    types = {},
+    div = document.createElement('div')
   ;
 
   function commonEventLoop(currentTarget, e, $handlers, synthetic) {
     for(var
+      continuePropagation,
       handlers = $handlers.slice(),
       evt = enrich(e, currentTarget),
       i = 0, length = handlers.length; i < length; i++
@@ -52,9 +54,13 @@
       }
       if (evt.stoppedImmediatePropagation) break;
     }
+    continuePropagation = !evt.stoppedPropagation;
+    if (continuePropagation && !synthetic && !live(currentTarget)) {
+      evt.cancelBubble = true;
+    }
     return (
       synthetic &&
-      !evt.stoppedPropagation &&
+      continuePropagation &&
       currentTarget.parentNode
     ) ?
       currentTarget.parentNode.dispatchEvent(evt) :
@@ -75,6 +81,10 @@
     var i = array.length;
     while(i-- && array[i] !== value);
     return i;
+  }
+
+  function live(self) {
+    return self.nodeType !== 9 && document.documentElement.contains(self);
   }
 
   function onReadyState(e) {
@@ -133,14 +143,22 @@
                 //        INPUT[ontype] could be different ?
                 e = document.createEventObject();
                 // do not clone ever a node
-                // specially a document one ... 
-                e[SECRET] = true;
+                // specially a document one ...
                 // use the secret to ignore them all
+                e[SECRET] = true;
+                // document a part if a node has never been
+                // added to any other node, fireEvent might
+                // behave very weirdly (read: trigger unspecified errors)
+                if (self.nodeType != 9 && self.parentNode == null) {
+                  div.appendChild(self);
+                }
                 self.fireEvent(ontype, e);
                 types[ontype] = true;
-                self.attachEvent(ontype, currentType.w);
               } catch(e) {
                 types[ontype] = false;
+                while (div.hasChildNodes()) {
+                  div.removeChild(div.firstChild);
+                }
               }
             } else {
               // no need to bother since
@@ -148,7 +166,9 @@
               types[ontype] = false;
             }
           }
-          currentType.n = types[ontype];
+          if (currentType.n = types[ontype]) {
+            self.attachEvent(ontype, currentType.w);
+          }
         }
         if (find(handlers, handler) < 0) {
           handlers[capture ? 'unshift' : 'push'](handler);
@@ -165,7 +185,7 @@
         ;
         if (!e.target) e.target = self;
         return valid ? (
-          currentType.n ?
+          currentType.n && live(self) ?
             self.fireEvent(ontype, e) :
             commonEventLoop(
               self,
@@ -175,7 +195,7 @@
             )
         ) : !!(
           (parentNode = self.parentNode) &&
-          (self.nodeType !== 9 && document.documentElement.contains(self)) &&
+          live(self) &&
           parentNode.dispatchEvent(e)
         );
       }},
@@ -196,6 +216,8 @@
   defineProperties(
     EventPrototype,
     {
+      bubbles: {value: true, writable: true},
+      cancelable: {value: true, writable: true},
       preventDefault: {value: function () {
         if (this.cancelable) {
           this.defaultPrevented = true;
