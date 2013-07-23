@@ -1,3 +1,9 @@
+try {
+  process.exit(0);
+} catch(node) {
+  
+}
+
 
 wru.createEvent = function(type, bubbles, cancelable) {
   var e = document.createEvent('Event');
