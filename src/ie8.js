@@ -186,17 +186,17 @@
         if (!e.target) e.target = self;
         return valid ? (
           currentType.n && live(self) ?
-            self.fireEvent(ontype, e) :
+            (self.fireEvent(ontype, e), !e.defaultPrevented) :
             commonEventLoop(
               self,
               e,
               currentType.h,
               true
             )
-        ) : !!(
-          (parentNode = self.parentNode) &&
-          live(self) &&
-          parentNode.dispatchEvent(e)
+        ) : (
+          (parentNode = self.parentNode) && live(self) ?
+            parentNode.dispatchEvent(e) :
+            true
         );
       }},
       removeEventListener: {value: function (type, handler, capture) {
@@ -305,7 +305,7 @@
       }},
       dispatchEvent: {value: function (e) {
         var method = window['on' + e.type];
-        return method ? method.call(window, e) : false;
+        return method ? method.call(window, e) !== false && !e.defaultPrevented : true;
       }},
       removeEventListener: {value: function (type, handler, capture) {
         var
