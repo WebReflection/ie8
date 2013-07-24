@@ -43,7 +43,7 @@ This shim normalizes the DOM Level 2 [Event interface](http://www.w3.org/TR/DOM-
 Here a humble list of things what won't probably ever be fixed in IE8
 
   * a standard capturing phase. The logic involved to pause a synthetic or DOM event, capture up, and re-dispatch top-down is probably not worth it the time and the size of the code. Right now if the `useCapture` flag is used, the event is prepended instead of appended simulating somehow the 99% of the time *reason* we might opt for the `capture` phase, being this usually slower too so it's a good practice, in any case, to `.stopPropagation()` on capture.
-  * not supported events `DOMContentLoaded` a part. As events might exist and might not exist in any browser out there, it does not make sense to fix them here. However, this polyfill provides all needed tools to fix special events through a powerful, custom events compatible, W3C standard API
+  * not supported modern events, `DOMContentLoaded` a part, such `transitionend` or similar. As events might exist and might not exist in any browser out there, it does not make sense to fix them here. However, this polyfill provides all needed tools to fix special events through a powerful, custom events compatible, W3C standard API
 
 
 ### possible troubleshooting
