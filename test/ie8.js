@@ -40,12 +40,12 @@ wru.test([
       div.dispatchEvent(wru.createEvent('click'));
     }
   },{
-    name: 'offlinse synthetic event NOT bubbling',
+    name: 'offlinse synthetic event MUST bubble',
     test: function () {
       var
         clicked = false,
         checkIfClicked = wru.async(function () {
-          wru.assert('should have not be clicked', !clicked);
+          wru.assert('should have been clicked', clicked);
         }),
         parentNode = document.createElement('div'),
         childNode = parentNode.appendChild(document.createElement('div')),
@@ -82,12 +82,12 @@ wru.test([
       subNode.dispatchEvent(wru.createEvent('click'));
     }
   },{
-    name: 'offlinse custom event NOT bubbling',
+    name: 'offlinse custom event MUST bubble',
     test: function () {
       var
         clicked = false,
         checkIfClicked = wru.async(function () {
-          wru.assert('should have not be clicked', !clicked);
+          wru.assert('should have been clicked', clicked);
         }),
         parentNode = document.createElement('div'),
         childNode = parentNode.appendChild(document.createElement('div')),

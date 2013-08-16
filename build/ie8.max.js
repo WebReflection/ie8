@@ -77,9 +77,11 @@ THE SOFTWARE.
       if (evt.stoppedImmediatePropagation) break;
     }
     continuePropagation = !evt.stoppedPropagation;
+    /*
     if (continuePropagation && !synthetic && !live(currentTarget)) {
       evt.cancelBubble = true;
     }
+    */
     return (
       synthetic &&
       continuePropagation &&
@@ -207,7 +209,7 @@ THE SOFTWARE.
         ;
         if (!e.target) e.target = self;
         return valid ? (
-          currentType.n && live(self) ?
+          currentType.n /* && live(self) */ ?
             (self.fireEvent(ontype, e), !e.defaultPrevented) :
             commonEventLoop(
               self,
@@ -216,7 +218,7 @@ THE SOFTWARE.
               true
             )
         ) : (
-          (parentNode = self.parentNode) && live(self) ?
+          (parentNode = self.parentNode) /* && live(self) */ ?
             parentNode.dispatchEvent(e) :
             true
         );
