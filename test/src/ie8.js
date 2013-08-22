@@ -117,6 +117,19 @@
   defineProperties(
     ElementPrototype,
     {
+      // bonus
+      textContent: {
+        get: function () {
+          return this.innerText;
+        },
+        set: function (innerText) {
+          // TODO: maybe this one is safer/better or ... both?
+          // this.innerText = '';
+          // this.appendChild(document.createTextNode(innerText));
+          this.innerText = innerText;
+        }
+      },
+      // DOM Level 2 events
       addEventListener: {value: function (type, handler, capture) {
         var
           self = this,
