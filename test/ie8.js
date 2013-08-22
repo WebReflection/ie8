@@ -331,6 +331,15 @@ wru.test([
         input.blur();
       }, 500);
     }
+  },{
+    name: 'textContent',
+    test: function () {
+      var div = document.createElement('div');
+      div.textContent = 'abc';
+      wru.assert('it has a text node', div.childNodes.length);
+      wru.assert('the content is right', div.innerHTML === 'abc');
+      wru.assert('the content is returned', div.textContent === 'abc');
+    }
   }
 ]);
 
