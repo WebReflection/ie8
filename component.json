@@ -1,0 +1,14 @@
+{
+  "name": "ie8",
+  "repo": "WebReflection/ie8",
+  "description": "some damn DOM fix for this damned browser",
+  "version": "0.1.0",
+  "keywords": [],
+  "dependencies": {},
+  "development": {},
+  "licenses": "MIT",
+  "main": "build/ie8.max.js",
+  "scripts": [
+    "build/ie8.max.js"
+  ]
+}
