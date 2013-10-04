@@ -161,7 +161,7 @@ wru.test([
         e.stopImmediatePropagation();
       });
       try {
-      div.dispatchEvent(wru.createEvent('click'));
+      div.dispatchEvent(wru.createEvent('test'));
       } catch(o_O) {alert(o_O)}
       wru.assert('only once', counter === 1);
     }
