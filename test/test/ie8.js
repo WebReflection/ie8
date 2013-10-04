@@ -154,11 +154,11 @@ wru.test([
           counter = 0;
       div.addEventListener('click', function(e) {
         counter++;
-        e.stopImmediatePropagation();
+        //e.stopImmediatePropagation();
       });
       div.addEventListener('click', function(e) {
         counter++;
-        e.stopImmediatePropagation();
+        //e.stopImmediatePropagation();
       });
       div.dispatchEvent(wru.createEvent('click'));
       wru.assert('only once', counter === 1);
