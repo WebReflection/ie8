@@ -164,7 +164,9 @@ wru.test([
         e.stopImmediatePropagation();
       });
       */
+      try {
       div.dispatchEvent(wru.createEvent('click'));
+      } catch(o_O) {alert(o_O)}
       wru.assert('only once', counter === 1);
     }
   },{
