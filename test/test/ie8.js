@@ -150,6 +150,7 @@ wru.test([
   },{
     name: 'native & stopImmediatePropagation',
     test: function () {
+      // TODO: verify why "click" here might cause problems ...
       var div = document.createElement('div'),
           counter = 0;
       div.addEventListener('test', function(e) {
