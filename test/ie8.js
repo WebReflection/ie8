@@ -150,17 +150,18 @@ wru.test([
   },{
     name: 'native & stopImmediatePropagation',
     test: function () {
+      // TODO: verify why "click" here might cause problems ...
       var div = document.createElement('div'),
           counter = 0;
-      div.addEventListener('click', function(e) {
+      div.addEventListener('test', function(e) {
         counter++;
         e.stopImmediatePropagation();
       });
-      div.addEventListener('click', function(e) {
+      div.addEventListener('test', function(e) {
         counter++;
         e.stopImmediatePropagation();
       });
-      div.dispatchEvent(wru.createEvent('click'));
+      div.dispatchEvent(wru.createEvent('test'));
       wru.assert('only once', counter === 1);
     }
   },{
