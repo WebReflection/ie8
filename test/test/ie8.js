@@ -152,17 +152,15 @@ wru.test([
     test: function () {
       var div = document.createElement('div'),
           counter = 0;
-      div.addEventListener('click', function(e) {
+      div.addEventListener('test', function(e) {
         counter++;
         e.stopImmediatePropagation();
       });
-      div.addEventListener('click', function(e) {
+      div.addEventListener('test', function(e) {
         counter++;
         e.stopImmediatePropagation();
       });
-      try {
       div.dispatchEvent(wru.createEvent('test'));
-      } catch(o_O) {alert(o_O)}
       wru.assert('only once', counter === 1);
     }
   },{
