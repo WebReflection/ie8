@@ -152,6 +152,7 @@ wru.test([
     test: function () {
       var div = document.createElement('div'),
           counter = 0;
+      alert(123);
       div.addEventListener('click', function(e) {
         counter++;
         //e.stopImmediatePropagation();
