@@ -152,18 +152,14 @@ wru.test([
     test: function () {
       var div = document.createElement('div'),
           counter = 0;
-      try {
       div.addEventListener('click', function(e) {
         counter++;
         e.stopImmediatePropagation();
       });
-      } catch(o_O) {alert(o_O)}
-      /*
       div.addEventListener('click', function(e) {
         counter++;
         e.stopImmediatePropagation();
       });
-      */
       try {
       div.dispatchEvent(wru.createEvent('click'));
       } catch(o_O) {alert(o_O)}
