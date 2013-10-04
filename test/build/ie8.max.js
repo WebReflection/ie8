@@ -221,9 +221,9 @@ THE SOFTWARE.
           parentNode
         ;
         if (!e.target) e.target = self;
-        return valid ? (
+        return (valid ? (
           currentType.n /* && live(self) */ ?
-            (self.fireEvent(ontype, e), !e.defaultPrevented) :
+            self.fireEvent(ontype, e) :
             commonEventLoop(
               self,
               e,
@@ -234,7 +234,7 @@ THE SOFTWARE.
           (parentNode = self.parentNode) /* && live(self) */ ?
             parentNode.dispatchEvent(e) :
             true
-        );
+        )), !e.defaultPrevented;
       }},
       removeEventListener: {value: function (type, handler, capture) {
         var
