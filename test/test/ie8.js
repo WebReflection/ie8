@@ -152,7 +152,7 @@ wru.test([
     test: function () {
       var div = document.createElement('div'),
           counter = 0;
-      alert(123);
+      /*
       div.addEventListener('click', function(e) {
         counter++;
         e.stopImmediatePropagation();
@@ -161,7 +161,8 @@ wru.test([
         counter++;
         e.stopImmediatePropagation();
       });
-      //div.dispatchEvent(wru.createEvent('click'));
+      */
+      div.dispatchEvent(wru.createEvent('click'));
       wru.assert('only once', counter === 1);
     }
   },{
