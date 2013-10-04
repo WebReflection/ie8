@@ -152,11 +152,11 @@ wru.test([
     test: function () {
       var div = document.createElement('div'),
           counter = 0;
-      /*
       div.addEventListener('click', function(e) {
         counter++;
         e.stopImmediatePropagation();
       });
+      /*
       div.addEventListener('click', function(e) {
         counter++;
         e.stopImmediatePropagation();
