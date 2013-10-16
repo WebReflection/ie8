@@ -1,0 +1,18 @@
+{
+    "name": "IE8",
+    "description": "some damn DOM fix for this damned browser",
+    "version": "0.1.0",
+    "main": "build/ie8.js",
+    "ignore": [
+        "node_modules",
+        "src",
+        "template",
+        "test",
+        ".gitignore",
+        ".npmignore",
+        ".travis.yml",
+        "index.html",
+        "Makefile",
+        "bench.html"
+    ]
+}
