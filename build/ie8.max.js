@@ -151,6 +151,26 @@ THE SOFTWARE.
           this.innerText = innerText;
         }
       },
+      // http://www.w3.org/TR/ElementTraversal/#attribute-nextElementSibling
+      nextElementSibling: {
+        get: function () {
+          var nextElementSibling = this.nextSibling;
+          while (nextElementSibling && nextElementSibling.nodeType != 1) {
+            nextElementSibling = nextElementSibling.nextSibling;
+          }
+          return nextElementSibling;
+        }
+      },
+      childElementCount: {
+        get: function () {
+          for(var
+            count = 0,
+            childNodes = this.childNodes || [],
+            i = childNodes.length; i--; count += childNodes[i].nodeType == 1
+          );
+          return count;
+        }
+      },
       // DOM Level 2 events
       addEventListener: {value: function (type, handler, capture) {
         var

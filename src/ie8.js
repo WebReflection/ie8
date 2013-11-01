@@ -129,6 +129,77 @@
           this.innerText = innerText;
         }
       },
+      // http://www.w3.org/TR/ElementTraversal/#interface-elementTraversal
+      firstElementChild: {
+        get: function () {
+          for(var
+            childNodes = this.childNodes || [],
+            i = 0, length = childNodes.length;
+            i < length; i++
+          ) {
+            if (childNodes[i].nodeType == 1) return childNodes[i];
+          }
+        }
+      },
+      lastElementChild: {
+        get: function () {
+          for(var
+            childNodes = this.childNodes || [],
+            i = childNodes.length;
+            i--;
+          ) {
+            if (childNodes[i].nodeType == 1) return childNodes[i];
+          }
+        }
+      },
+      previousElementSibling: {
+        get: function () {
+          var previousElementSibling = this.previousSibling;
+          while (previousElementSibling && previousElementSibling.nodeType != 1) {
+            previousElementSibling = previousElementSibling.previousSibling;
+          }
+          return previousElementSibling;
+        }
+      },
+      nextElementSibling: {
+        get: function () {
+          var nextElementSibling = this.nextSibling;
+          while (nextElementSibling && nextElementSibling.nodeType != 1) {
+            nextElementSibling = nextElementSibling.nextSibling;
+          }
+          return nextElementSibling;
+        }
+      },
+      childElementCount: {
+        get: function () {
+          for(var
+            count = 0,
+            childNodes = this.childNodes || [],
+            i = childNodes.length; i--; count += childNodes[i].nodeType == 1
+          );
+          return count;
+        }
+      },
+      /*
+      // children would be an override
+      // IE8 already supports them but with comments too
+      // not just nodeType 1
+      children: {
+        get: function () {
+          for(var
+            children = [],
+            childNodes = this.childNodes || [],
+            i = 0, length = childNodes.length;
+            i < length; i++
+          ) {
+            if (childNodes[i].nodeType == 1) {
+              children.push(childNodes[i]);
+            }
+          }
+          return children;
+        }
+      },
+      */
       // DOM Level 2 events
       addEventListener: {value: function (type, handler, capture) {
         var

@@ -31,6 +31,63 @@ wru.test([
       }());
     }
   },{
+    name: 'firstElementChild',
+    test: function () {
+      var div = document.createElement('div');
+      div.innerHTML = 'a<i>b</i>c<i>d</i>e';
+      wru.assert(
+        div.firstElementChild.nodeName === 'I' &&
+        div.firstElementChild.textContent === 'b'
+      );
+    }
+  },{
+    name: 'lastElementChild',
+    test: function () {
+      var div = document.createElement('div');
+      div.innerHTML = 'a<i>b</i>c<i>d</i>e';
+      wru.assert(
+        div.lastElementChild.nodeName === 'I' &&
+        div.lastElementChild.textContent === 'd'
+      );
+    }
+  },{
+    name: 'previousElementSibling',
+    test: function () {
+      var div = document.createElement('div'),
+          i;
+      div.innerHTML = 'a<i>b</i>c<i>d</i>e<i>f</i>';
+      i = div.getElementsByTagName('i')[1];
+      
+      wru.assert(
+        i.previousElementSibling.nodeName === 'I' &&
+        i.previousElementSibling.textContent === 'b'
+      );
+    }
+  },{
+    name: 'nextElementSibling',
+    test: function () {
+      var div = document.createElement('div'),
+          i;
+      div.innerHTML = 'a<i>b</i>c<i>d</i>e<i>f</i>';
+      i = div.getElementsByTagName('i')[1];
+      
+      wru.assert(
+        i.nextElementSibling.nodeName === 'I' &&
+        i.nextElementSibling.textContent === 'f'
+      );
+    }
+  },{
+    name: 'childElementCount',
+    test: function () {
+      var div = document.createElement('div');
+      div.innerHTML = 'a<i>b</i>c<i>d</i>e<i>f</i>';
+      
+      wru.assert(
+        div.childElementCount ===
+        div.getElementsByTagName('i').length
+      );
+    }
+  },{
     name: 'off line synthetic events',
     test: function () {
       var div = document.createElement('div');
