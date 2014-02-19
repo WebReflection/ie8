@@ -151,7 +151,38 @@ THE SOFTWARE.
           this.innerText = innerText;
         }
       },
-      // http://www.w3.org/TR/ElementTraversal/#attribute-nextElementSibling
+      // http://www.w3.org/TR/ElementTraversal/#interface-elementTraversal
+      firstElementChild: {
+        get: function () {
+          for(var
+            childNodes = this.childNodes || [],
+            i = 0, length = childNodes.length;
+            i < length; i++
+          ) {
+            if (childNodes[i].nodeType == 1) return childNodes[i];
+          }
+        }
+      },
+      lastElementChild: {
+        get: function () {
+          for(var
+            childNodes = this.childNodes || [],
+            i = childNodes.length;
+            i--;
+          ) {
+            if (childNodes[i].nodeType == 1) return childNodes[i];
+          }
+        }
+      },
+      previousElementSibling: {
+        get: function () {
+          var previousElementSibling = this.previousSibling;
+          while (previousElementSibling && previousElementSibling.nodeType != 1) {
+            previousElementSibling = previousElementSibling.previousSibling;
+          }
+          return previousElementSibling;
+        }
+      },
       nextElementSibling: {
         get: function () {
           var nextElementSibling = this.nextSibling;
@@ -171,6 +202,26 @@ THE SOFTWARE.
           return count;
         }
       },
+      /*
+      // children would be an override
+      // IE8 already supports them but with comments too
+      // not just nodeType 1
+      children: {
+        get: function () {
+          for(var
+            children = [],
+            childNodes = this.childNodes || [],
+            i = 0, length = childNodes.length;
+            i < length; i++
+          ) {
+            if (childNodes[i].nodeType == 1) {
+              children.push(childNodes[i]);
+            }
+          }
+          return children;
+        }
+      },
+      */
       // DOM Level 2 events
       addEventListener: {value: function (type, handler, capture) {
         var
@@ -267,6 +318,54 @@ THE SOFTWARE.
         ;
         if (-1 < i) handlers.splice(i, 1);
       }}
+    }
+  );
+
+  defineProperties(
+    XMLHttpRequest.prototype,
+    {
+      addEventListener: {value: function (type, handler, capture) {
+        var
+          self = this,
+          ontype = 'on' + type,
+          temple =  self[SECRET] ||
+                      defineProperty(
+                        self, SECRET, {value: {}}
+                      )[SECRET],
+          currentType = temple[ontype] || (temple[ontype] = {}),
+          handlers  = currentType.h || (currentType.h = [])
+        ;
+        if (find(handlers, handler) < 0) {
+          if (!self[ontype]) {
+            self[ontype] = function () {
+              var e = document.createEvent('Event');
+              e.initEvent(type, true, true);
+              self.dispatchEvent(e);
+            };
+          }
+          handlers[capture ? 'unshift' : 'push'](handler);
+        }
+      }},
+      dispatchEvent: {value: function (e) {
+        var
+          self = this,
+          ontype = 'on' + e.type,
+          temple =  self[SECRET],
+          currentType = temple && temple[ontype],
+          valid = !!currentType
+        ;
+        return valid && (
+          currentType.n /* && live(self) */ ?
+            self.fireEvent(ontype, e) :
+            commonEventLoop(
+              self,
+              e,
+              currentType.h,
+              true
+            )
+        );
+      }},
+      removeEventListener: {value: ElementPrototype.removeEventListener}
     }
   );
 

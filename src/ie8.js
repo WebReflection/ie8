@@ -300,6 +300,54 @@
   );
 
   defineProperties(
+    XMLHttpRequest.prototype,
+    {
+      addEventListener: {value: function (type, handler, capture) {
+        var
+          self = this,
+          ontype = 'on' + type,
+          temple =  self[SECRET] ||
+                      defineProperty(
+                        self, SECRET, {value: {}}
+                      )[SECRET],
+          currentType = temple[ontype] || (temple[ontype] = {}),
+          handlers  = currentType.h || (currentType.h = [])
+        ;
+        if (find(handlers, handler) < 0) {
+          if (!self[ontype]) {
+            self[ontype] = function () {
+              var e = document.createEvent('Event');
+              e.initEvent(type, true, true);
+              self.dispatchEvent(e);
+            };
+          }
+          handlers[capture ? 'unshift' : 'push'](handler);
+        }
+      }},
+      dispatchEvent: {value: function (e) {
+        var
+          self = this,
+          ontype = 'on' + e.type,
+          temple =  self[SECRET],
+          currentType = temple && temple[ontype],
+          valid = !!currentType
+        ;
+        return valid && (
+          currentType.n /* && live(self) */ ?
+            self.fireEvent(ontype, e) :
+            commonEventLoop(
+              self,
+              e,
+              currentType.h,
+              true
+            )
+        );
+      }},
+      removeEventListener: {value: ElementPrototype.removeEventListener}
+    }
+  );
+
+  defineProperties(
     EventPrototype,
     {
       bubbles: {value: true, writable: true},

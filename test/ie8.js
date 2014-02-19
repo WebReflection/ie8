@@ -398,6 +398,21 @@ wru.test([
       wru.assert('the content is right', div.innerHTML === 'abc');
       wru.assert('the content is returned', div.textContent === 'abc');
     }
+  },{
+    name: 'XMLHttpRequest',
+    test: function () {
+      var xhr = new XMLHttpRequest,
+          OK = wru.async(function () {
+            wru.assert('OK');
+          });
+      xhr.open('get', '?' + Math.random(), true);
+      xhr.addEventListener('readystatechange', function () {
+        if (this.readyState == 4) {
+          OK();
+        }
+      });
+      xhr.send(null);
+    }
   }
 ]);
 
