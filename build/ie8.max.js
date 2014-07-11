@@ -485,8 +485,16 @@ THE SOFTWARE.
             result : ((result + '') || 'auto');
         };
 
+        // unsupported
+        function PseudoComputedStyle() {}
+        PseudoComputedStyle.prototype.getPropertyValue = function () {
+          return null;
+        };
+
         return function (el, pseudo) {
-          return new ComputedStyle(el);
+          return pseudo ?
+            new PseudoComputedStyle(el) :
+            new ComputedStyle(el);
         };
 
       }()},
