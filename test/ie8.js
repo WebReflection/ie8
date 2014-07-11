@@ -17,6 +17,21 @@ wru.createEvent = function(type, bubbles, cancelable) {
 
 wru.test([
   {
+    name: 'getComputedStyle',
+    test: function () {
+      var div = document.createElement('div');
+      div.style.marginTop = '50%';
+      document.body.insertBefore(
+        div,
+        document.body.firstChild
+      );
+      wru.assert('the amount is in pixels', /^\d+px$/.test(
+        getComputedStyle(div, null).getPropertyValue('margin-top')
+      ));
+      document.body.removeChild(div);
+    }
+  },
+  {
     name: 'DOMContentLoaded',
     test: function () {
       var waitforit = wru.async(function () {
