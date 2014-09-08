@@ -200,7 +200,7 @@
         }
       },
       */
-      // DOM Level 2 events
+      // DOM Level 2 EventTarget methods and events
       addEventListener: {value: function (type, handler, capture) {
         var
           self = this,
@@ -298,6 +298,13 @@
       }}
     }
   );
+
+  // EventTarget methods for Text nodes too
+  defineProperties(window.Text.prototype, {
+    addEventListener: {value: ElementPrototype.addEventListener},
+    dispatchEvent: {value: ElementPrototype.dispatchEvent},
+    removeEventListener: {value: ElementPrototype.removeEventListener}
+  });
 
   defineProperties(
     XMLHttpRequest.prototype,
