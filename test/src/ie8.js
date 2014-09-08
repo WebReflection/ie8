@@ -200,7 +200,7 @@
         }
       },
       */
-      // DOM Level 2 events
+      // DOM Level 2 EventTarget methods and events
       addEventListener: {value: function (type, handler, capture) {
         var
           self = this,
@@ -298,6 +298,13 @@
       }}
     }
   );
+
+  // EventTarget methods for Text nodes too
+  defineProperties(window.Text.prototype, {
+    addEventListener: {value: ElementPrototype.addEventListener},
+    dispatchEvent: {value: ElementPrototype.dispatchEvent},
+    removeEventListener: {value: ElementPrototype.removeEventListener}
+  });
 
   defineProperties(
     XMLHttpRequest.prototype,
@@ -419,6 +426,64 @@
   defineProperties(
     WindowPrototype,
     {
+      getComputedStyle: {value: function(){
+
+        var // partially grabbed from jQuery and Dean's hack
+          notpixel = /^(?:[+-]?(?:\d*\.|)\d+(?:[eE][+-]?\d+|))(?!px)[a-z%]+$/,
+          position = /^(top|right|bottom|left)$/,
+          re = /\-([a-z])/g,
+          place = function (match, $1) {
+            return $1.toUpperCase();
+          }
+        ;
+
+        function ComputedStyle(_) {
+          this._ = _;
+        }
+
+        ComputedStyle.prototype.getPropertyValue = function (name) {
+          var
+            el = this._,
+            style = el.style,
+            currentStyle = el.currentStyle,
+            runtimeStyle = el.runtimeStyle,
+            result,
+            left,
+            rtLeft
+          ;
+          name = (name === 'float' ? 'style-float' : name).replace(re, place);
+          result = currentStyle ? currentStyle[name] : style[name];
+          if (notpixel.test(result) && !position.test(name)) {
+            left = style.left;
+            rtLeft = runtimeStyle && runtimeStyle.left;
+            if (rtLeft) {
+              runtimeStyle.left = currentStyle.left;
+            }
+            style.left = name === 'fontSize' ? '1em' : result;
+            result = style.pixelLeft + 'px';
+            style.left = left;
+            if (rtLeft) {
+              runtimeStyle.left = rtLeft;
+            }
+          }
+          return result == null ?
+            result : ((result + '') || 'auto');
+        };
+
+        // unsupported
+        function PseudoComputedStyle() {}
+        PseudoComputedStyle.prototype.getPropertyValue = function () {
+          return null;
+        };
+
+        return function (el, pseudo) {
+          return pseudo ?
+            new PseudoComputedStyle(el) :
+            new ComputedStyle(el);
+        };
+
+      }()},
+
       addEventListener: {value: function (type, handler, capture) {
         var
           self = window,
