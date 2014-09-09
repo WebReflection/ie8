@@ -3,7 +3,14 @@
   "name": "ie8",
   "description": "some damn DOM fix for this damned browser",
   "homepage": "https://github.com/WebReflection/ie8",
-  "keywords": [],
+  "keywords": [
+    "IE8",
+    "addEventListener",
+    "dispatchEvent",
+    "DOM3",
+    "document.createEvent",
+    "DOMContentLoaded"
+  ],
   "author": {
     "name": "Andrea Giammarchi",
     "web": "http://webreflection.blogspot.com/"
