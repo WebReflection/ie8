@@ -17,7 +17,7 @@ that's pretty much it for now ...
 ### how to include the project
 Here a page example
 ```html
-<!doctype html>
+<!DOCTYPE html>
 <html>
   <head>
     <title>ie8</title>
@@ -32,6 +32,13 @@ Here a page example
 ```
 The file can be either the [full version](build/ie8.max.js) or [the minified one](build/ie8.js) and could be placed before or after some third parts library accordingly with compatibility.
 
+### ie8 in CDN
+It is now possible to include this file through [cdnjs](http://www.cdnjs.com)
+```js
+<!--[if IE 8]><script
+  src="//cdnjs.cloudflare.com/ajax/libs/ie8/0.2.0/ie8.js"
+></script><![endif]-->
+```
 
 ### W3C DOM Level 2
 This polyfill normalize the [EventTarget interface](http://www.w3.org/TR/DOM-Level-2-Events/events.html#Events-Registration-interfaces) for every node.
