@@ -15,7 +15,7 @@ wru.createEvent = function(type, bubbles, cancelable) {
   return e;
 };
 
-wru.test([/*
+wru.test([
   {
     name: 'getComputedStyle',
     test: function () {
@@ -404,7 +404,7 @@ wru.test([/*
         input.blur();
       }, 500);
     }
-  },*/{
+  },{
     name: 'textContent - ElementPrototype',
     test: function () {
       var div = document.createElement('div');
