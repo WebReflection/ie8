@@ -1,7 +1,7 @@
 {
     "name": "IE8",
     "description": "some damn DOM fix for this damned browser",
-    "version": "0.2.0",
+    "version": "0.2.1",
     "main": "build/ie8.js",
     "ignore": [
         "node_modules",

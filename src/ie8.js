@@ -24,10 +24,15 @@
     },
     hasOwnProperty = Object.prototype.hasOwnProperty,
     // here IE7 will break like a charm
+    TextPrototype = window.Text.prototype,
     ElementPrototype = window.Element.prototype,
     EventPrototype = window.Event.prototype,
     DocumentPrototype = window.HTMLDocument.prototype,
     WindowPrototype = window.Window.prototype,
+    // used to textContent Text.prototype
+    nodeValueDescriptor = Object.getOwnPropertyDescriptor(
+      TextPrototype, 'nodeValue'
+    ),
     // none of above native constructors exist/are exposed
     possiblyNativeEvent = /^[a-z]+$/,
     // ^ actually could probably be just /^[a-z]+$/
@@ -114,20 +119,39 @@
     return e;
   }
 
+  function getTextContent() {
+    if (this.tagName === 'BR') return '\n';
+    var
+      textNode = this.firstChild,
+      arrayContent = []
+    ;
+    while(textNode) {
+      if (textNode.nodeType !== 8 && textNode.nodeType !== 7) {
+        arrayContent.push(textNode.textContent);
+      }
+      textNode = textNode.nextSibling;
+    }
+    return arrayContent.join('');
+  }
+
+  function setTextContent(textContent) {
+    var node;
+    while ((node = this.lastChild)) {
+      this.removeChild(node);
+    }
+    if (textContent != null) {
+      this.appendChild(document.createTextNode(textContent));
+    }
+    return textContent;
+  }
+
   defineProperties(
     ElementPrototype,
     {
       // bonus
       textContent: {
-        get: function () {
-          return this.innerText;
-        },
-        set: function (innerText) {
-          // TODO: maybe this one is safer/better or ... both?
-          // this.innerText = '';
-          // this.appendChild(document.createTextNode(innerText));
-          this.innerText = innerText;
-        }
+        get: getTextContent,
+        set: setTextContent
       },
       // http://www.w3.org/TR/ElementTraversal/#interface-elementTraversal
       firstElementChild: {
@@ -300,7 +324,17 @@
   );
 
   // EventTarget methods for Text nodes too
-  defineProperties(window.Text.prototype, {
+  defineProperties(TextPrototype, {
+    // apparently it cannot bwe just the descriptor
+    textContent: {
+      // or the method ..
+      get: function () {
+        return nodeValueDescriptor.get.call(this);
+      },
+      set: function (value) {
+        nodeValueDescriptor.set.call(this, value);
+      }
+    },
     addEventListener: {value: ElementPrototype.addEventListener},
     dispatchEvent: {value: ElementPrototype.dispatchEvent},
     removeEventListener: {value: ElementPrototype.removeEventListener}
