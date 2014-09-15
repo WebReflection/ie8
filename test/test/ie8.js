@@ -15,7 +15,7 @@ wru.createEvent = function(type, bubbles, cancelable) {
   return e;
 };
 
-wru.test([
+wru.test([/*
   {
     name: 'getComputedStyle',
     test: function () {
@@ -404,14 +404,59 @@ wru.test([
         input.blur();
       }, 500);
     }
-  },{
-    name: 'textContent',
+  },*/{
+    name: 'textContent - ElementPrototype',
     test: function () {
       var div = document.createElement('div');
       div.textContent = 'abc';
       wru.assert('it has a text node', div.childNodes.length);
       wru.assert('the content is right', div.innerHTML === 'abc');
       wru.assert('the content is returned', div.textContent === 'abc');
+    }
+  },{
+    name: 'textContent - HTMLCommentElement',
+    test: function () {
+      var div = document.createElement('div');
+      div.innerHTML = 'a <!-- b --> c';
+      wru.assert('get', div.childNodes[1].textContent === ' b ');
+      div.childNodes[1].textContent = 'c';
+      wru.assert('set', div.childNodes[1].textContent === 'c');
+    }
+  },{
+    name: 'textContent - HTMLScriptElement',
+    test: function () {
+      var div = document.createElement('div');
+      div.innerHTML = 'a <script> b </script> c';
+      wru.assert('get', div.childNodes[1].textContent === ' b ');
+      div.childNodes[1].textContent = 'c';
+      wru.assert('get', div.childNodes[1].textContent === 'c');
+    }
+  },{
+    name: 'textContent - HTMLStyleElement',
+    test: function () {
+      var div = document.createElement('div');
+      div.innerHTML = 'a <style>html{}</style> c';
+      wru.assert('get', /^\s*html\s*\{\s*\}\s*$/i.test(div.childNodes[1].textContent));
+      div.childNodes[1].textContent = 'body{}';
+      wru.assert('set', /^\s*body\s*\{\s*\}\s*$/i.test(div.childNodes[1].textContent));
+    }
+  },{
+    name: 'textContent - HTMLTitleElement',
+    test: function () {
+      var title = document.createElement('title');
+      title.innerHTML = '&amp;';
+      wru.assert('get', title.textContent === '&');
+      title.textContent = '&amp;';
+      wru.assert('set', title.textContent === '&amp;');
+    }
+  },{
+    name: 'textContent - Document fragment',
+    test: function () {
+      var df = document.createDocumentFragment();
+      df.appendChild(document.createTextNode('a'));
+      wru.assert('get', df.textContent === 'a');
+      df.textContent = 'b';
+      wru.assert('set', df.textContent === 'b');
     }
   },{
     name: 'XMLHttpRequest',

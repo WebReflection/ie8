@@ -44,12 +44,11 @@ THE SOFTWARE.
         }
       }
     },
+    getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor,
     hasOwnProperty = Object.prototype.hasOwnProperty,
     // here IE7 will break like a charm
     ElementPrototype = window.Element.prototype,
-    EventPrototype = window.Event.prototype,
-    DocumentPrototype = window.HTMLDocument.prototype,
-    WindowPrototype = window.Window.prototype,
+    TextPrototype = window.Text.prototype,
     // none of above native constructors exist/are exposed
     possiblyNativeEvent = /^[a-z]+$/,
     // ^ actually could probably be just /^[a-z]+$/
@@ -92,6 +91,34 @@ THE SOFTWARE.
     ;
   }
 
+  function commonDescriptor(get, set) {
+    return {
+      // if you try with enumerable: true
+      // IE8 will miserably fail
+      configurable: true,
+      get: get,
+      set: set
+    };
+  }
+
+  function commonTextContent(protoDest, protoSource, property) {
+    var descriptor = getOwnPropertyDescriptor(
+      protoSource || protoDest, property
+    );
+    defineProperty(
+      protoDest,
+      'textContent',
+      commonDescriptor(
+        function () {
+          return descriptor.get.call(this);
+        },
+        function (textContent) {
+          descriptor.set.call(this, textContent);
+        }
+      )
+    );
+  }
+
   function enrich(e, currentTarget) {
     e.currentTarget = currentTarget;
     e.eventPhase = (
@@ -105,6 +132,21 @@ THE SOFTWARE.
     var i = array.length;
     while(i-- && array[i] !== value);
     return i;
+  }
+
+  function getTextContent() {
+    if (this.tagName === 'BR') return '\n';
+    var
+      textNode = this.firstChild,
+      arrayContent = []
+    ;
+    while(textNode) {
+      if (textNode.nodeType !== 8 && textNode.nodeType !== 7) {
+        arrayContent.push(textNode.textContent);
+      }
+      textNode = textNode.nextSibling;
+    }
+    return arrayContent.join('');
   }
 
   function live(self) {
@@ -123,6 +165,16 @@ THE SOFTWARE.
     }
   }
 
+  function setTextContent(textContent) {
+    var node;
+    while ((node = this.lastChild)) {
+      this.removeChild(node);
+    }
+    if (textContent != null) {
+      this.appendChild(document.createTextNode(textContent));
+    }
+  }
+
   function verify(self, e) {
     if (!e) {
       e = window.event;
@@ -136,20 +188,54 @@ THE SOFTWARE.
     return e;
   }
 
+  // normalized textContent for:
+  //  comment, script, style, text, title
+  commonTextContent(
+    window.HTMLCommentElement.prototype,
+    ElementPrototype,
+    'nodeValue'
+  );
+
+  commonTextContent(
+    window.HTMLScriptElement.prototype,
+    null,
+    'text'
+  );
+
+  commonTextContent(
+    TextPrototype,
+    null,
+    'nodeValue'
+  );
+
+  commonTextContent(
+    window.HTMLTitleElement.prototype,
+    null,
+    'text'
+  );
+
+  defineProperty(
+    window.HTMLStyleElement.prototype,
+    'textContent',
+    (function(descriptor){
+      return commonDescriptor(
+        function () {
+          return descriptor.get.call(this.styleSheet);
+        },
+        function (textContent) {
+          descriptor.set.call(this.styleSheet, textContent);
+        }
+      );
+    }(getOwnPropertyDescriptor(window.CSSStyleSheet.prototype, 'cssText')))
+  );
+
   defineProperties(
     ElementPrototype,
     {
       // bonus
       textContent: {
-        get: function () {
-          return this.innerText;
-        },
-        set: function (innerText) {
-          // TODO: maybe this one is safer/better or ... both?
-          // this.innerText = '';
-          // this.appendChild(document.createTextNode(innerText));
-          this.innerText = innerText;
-        }
+        get: getTextContent,
+        set: setTextContent
       },
       // http://www.w3.org/TR/ElementTraversal/#interface-elementTraversal
       firstElementChild: {
@@ -322,14 +408,14 @@ THE SOFTWARE.
   );
 
   // EventTarget methods for Text nodes too
-  defineProperties(window.Text.prototype, {
+  defineProperties(TextPrototype, {
     addEventListener: {value: ElementPrototype.addEventListener},
     dispatchEvent: {value: ElementPrototype.dispatchEvent},
     removeEventListener: {value: ElementPrototype.removeEventListener}
   });
 
   defineProperties(
-    XMLHttpRequest.prototype,
+    window.XMLHttpRequest.prototype,
     {
       addEventListener: {value: function (type, handler, capture) {
         var
@@ -377,7 +463,7 @@ THE SOFTWARE.
   );
 
   defineProperties(
-    EventPrototype,
+    window.Event.prototype,
     {
       bubbles: {value: true, writable: true},
       cancelable: {value: true, writable: true},
@@ -407,8 +493,18 @@ THE SOFTWARE.
   );
 
   defineProperties(
-    DocumentPrototype,
+    window.HTMLDocument.prototype,
     {
+      textContent: {
+        get: function () {
+          return this.nodeType === 11 ? getTextContent.call(this) : null;
+        },
+        set: function (textContent) {
+          if (this.nodeType === 11) {
+            setTextContent.call(this, textContent);
+          }
+        }
+      },
       addEventListener: {value: function(type, handler, capture) {
         var self = this;
         ElementPrototype.addEventListener.call(self, type, handler, capture);
@@ -446,7 +542,7 @@ THE SOFTWARE.
   );
 
   defineProperties(
-    WindowPrototype,
+    window.Window.prototype,
     {
       getComputedStyle: {value: function(){
 
