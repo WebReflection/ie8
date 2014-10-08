@@ -18,7 +18,13 @@
     function (object, descriptors) {
       for(var key in descriptors) {
         if (hasOwnProperty.call(descriptors, key)) {
-          defineProperty(object, key, descriptors[key]);
+          try {
+            defineProperty(object, key, descriptors[key]);
+          } catch(o_O) {
+            if (window.console) {
+              console.log(key + ' failed on object:', object, o_O.message);
+            }
+          }
         }
       }
     },
