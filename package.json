@@ -21,6 +21,6 @@
   },
   "main": "./build/ie8.js",
   "devDependencies": {
-    "wru": ">= 0.0.0"
-  }
+    "wru": ">= 0.0.0",
+    "uglify-js": "^2.4.15"
 }
