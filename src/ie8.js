@@ -1,13 +1,13 @@
 
   /*! (C) WebReflection Mit Style License */
-  if (document.createEvent) return;
+  // if (document.createEvent) return;
   var
     DUNNOABOUTDOMLOADED = true,
     READYEVENTDISPATCHED = false,
     ONREADYSTATECHANGE = 'onreadystatechange',
     DOMCONTENTLOADED = 'DOMContentLoaded',
     SECRET = '__IE8__' + Math.random(),
-    Object = window.Object,
+    // Object = window.Object,
     defineProperty = Object.defineProperty ||
     // just in case ...
     function (object, property, descriptor) {
@@ -89,6 +89,12 @@
     var descriptor = getOwnPropertyDescriptor(
       protoSource || protoDest, property
     );
+
+    if (!descriptor) {
+      // console.warn("no fallback descriptor for ", protoDest, "#", property, " in ", protoSource);
+      return false;
+    }
+
     defineProperty(
       protoDest,
       'textContent',
