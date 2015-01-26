@@ -1,6 +1,6 @@
 
   /*! (C) WebReflection Mit Style License */
-  // if (document.createEvent) return;
+  if (document.createEvent) return;
   var
     DUNNOABOUTDOMLOADED = true,
     READYEVENTDISPATCHED = false,
@@ -89,12 +89,6 @@
     var descriptor = getOwnPropertyDescriptor(
       protoSource || protoDest, property
     );
-
-    if (!descriptor) {
-      // console.warn("no fallback descriptor for ", protoDest, "#", property, " in ", protoSource);
-      return false;
-    }
-
     defineProperty(
       protoDest,
       'textContent',
