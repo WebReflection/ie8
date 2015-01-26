@@ -7,7 +7,7 @@
     ONREADYSTATECHANGE = 'onreadystatechange',
     DOMCONTENTLOADED = 'DOMContentLoaded',
     SECRET = '__IE8__' + Math.random(),
-    Object = window.Object,
+    // Object = window.Object,
     defineProperty = Object.defineProperty ||
     // just in case ...
     function (object, property, descriptor) {
