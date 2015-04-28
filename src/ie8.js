@@ -479,6 +479,11 @@
   defineProperties(
     window.HTMLDocument.prototype,
     {
+      defaultView: {
+        get: function () {
+          return this.parentWindow;
+        }
+      },
       textContent: {
         get: function () {
           return this.nodeType === 11 ? getTextContent.call(this) : null;

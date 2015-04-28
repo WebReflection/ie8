@@ -8,8 +8,8 @@ ie8
  * `document.createEvent('Event')` standard API  with `e.initEvent(type, bubbles, cancelable)` supported too
  * `preventDefault()`, `stopPropagation()`, `stopImmediatePropagation()` working with both synthetic and real events
  * `document.addEventListener('DOMContentLoaded', callback, false)` supported
-
-that's pretty much it for now ... 
+ * `textContent`, `firstElementChild`, `lastElementChild`, `previousElementSibling`, `nextElementSibling`, `childElementCount`
+ * `document.defaultView`, `window.getComputedStyle`
 
 [current tests file](test/ie8.js) and [live test page](http://webreflection.github.io/ie8/test/)
 
@@ -36,7 +36,7 @@ The file can be either the [full version](build/ie8.max.js) or [the minified one
 It is now possible to include this file through [cdnjs](http://www.cdnjs.com)
 ```html
 <!--[if IE 8]><script
-  src="//cdnjs.cloudflare.com/ajax/libs/ie8/0.2.2/ie8.js"
+  src="//cdnjs.cloudflare.com/ajax/libs/ie8/0.2.5/ie8.js"
 ></script><![endif]-->
 ```
 

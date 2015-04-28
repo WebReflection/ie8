@@ -1,5 +1,5 @@
 /*!
-Copyright (C) 2013 by WebReflection
+Copyright (C) 2013-2015 by WebReflection
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -29,7 +29,7 @@ THE SOFTWARE.
     ONREADYSTATECHANGE = 'onreadystatechange',
     DOMCONTENTLOADED = 'DOMContentLoaded',
     SECRET = '__IE8__' + Math.random(),
-    Object = window.Object,
+    // Object = window.Object,
     defineProperty = Object.defineProperty ||
     // just in case ...
     function (object, property, descriptor) {
@@ -501,6 +501,11 @@ THE SOFTWARE.
   defineProperties(
     window.HTMLDocument.prototype,
     {
+      defaultView: {
+        get: function () {
+          return this.parentWindow;
+        }
+      },
       textContent: {
         get: function () {
           return this.nodeType === 11 ? getTextContent.call(this) : null;
