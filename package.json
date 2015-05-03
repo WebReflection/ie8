@@ -20,7 +20,7 @@
     "url": "git://github.com/WebReflection/ie8.git"
   },
   "main": "./build/ie8.js",
-  "devDendencies": {
-    "wru": ">= 0.0.0"
-  }
+  "devDependencies": {
+    "wru": ">= 0.0.0",
+    "uglify-js": "^2.4.15"
 }
