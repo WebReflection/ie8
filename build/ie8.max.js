@@ -272,6 +272,20 @@ THE SOFTWARE.
           }
         }
       },
+      oninput: {
+        get: function () {
+          return this._oninput || null;
+        },
+        set: function (oninput) {
+          if (this._oninput) {
+            this.removeEventListener('input', this._oninput);
+            this._oninput = oninput;
+            if (oninput) {
+              this.addEventListener('input', oninput);
+            }
+          }
+        }
+      },
       previousElementSibling: {
         get: function () {
           var previousElementSibling = this.previousSibling;
