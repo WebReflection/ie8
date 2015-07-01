@@ -1,5 +1,5 @@
 /*!
-Copyright (C) 2013 by WebReflection
+Copyright (C) 2013-2015 by WebReflection
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -29,7 +29,7 @@ THE SOFTWARE.
     ONREADYSTATECHANGE = 'onreadystatechange',
     DOMCONTENTLOADED = 'DOMContentLoaded',
     SECRET = '__IE8__' + Math.random(),
-    Object = window.Object,
+    // Object = window.Object,
     defineProperty = Object.defineProperty ||
     // just in case ...
     function (object, property, descriptor) {
@@ -40,7 +40,13 @@ THE SOFTWARE.
     function (object, descriptors) {
       for(var key in descriptors) {
         if (hasOwnProperty.call(descriptors, key)) {
-          defineProperty(object, key, descriptors[key]);
+          try {
+            defineProperty(object, key, descriptors[key]);
+          } catch(o_O) {
+            if (window.console) {
+              console.log(key + ' failed on object:', object, o_O.message);
+            }
+          }
         }
       }
     },
@@ -153,6 +159,12 @@ THE SOFTWARE.
     return self.nodeType !== 9 && document.documentElement.contains(self);
   }
 
+  function onkeyup(e) {
+    var evt = document.createEvent('Event');
+    evt.initEvent('input', true, true);
+    (e.srcElement || e.fromElement || document).dispatchEvent(evt);
+  }
+
   function onReadyState(e) {
     if (!READYEVENTDISPATCHED && readyStateOK.test(
       document.readyState
@@ -257,6 +269,20 @@ THE SOFTWARE.
             i--;
           ) {
             if (childNodes[i].nodeType == 1) return childNodes[i];
+          }
+        }
+      },
+      oninput: {
+        get: function () {
+          return this._oninput || null;
+        },
+        set: function (oninput) {
+          if (this._oninput) {
+            this.removeEventListener('input', this._oninput);
+            this._oninput = oninput;
+            if (oninput) {
+              this.addEventListener('input', oninput);
+            }
           }
         }
       },
@@ -366,6 +392,9 @@ THE SOFTWARE.
         }
         if (find(handlers, handler) < 0) {
           handlers[capture ? 'unshift' : 'push'](handler);
+        }
+        if (type === 'input') {
+          self.attachEvent('onkeyup', onkeyup);
         }
       }},
       dispatchEvent: {value: function (e) {
@@ -495,6 +524,11 @@ THE SOFTWARE.
   defineProperties(
     window.HTMLDocument.prototype,
     {
+      defaultView: {
+        get: function () {
+          return this.parentWindow;
+        }
+      },
       textContent: {
         get: function () {
           return this.nodeType === 11 ? getTextContent.call(this) : null;

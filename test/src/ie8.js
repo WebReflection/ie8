@@ -7,7 +7,7 @@
     ONREADYSTATECHANGE = 'onreadystatechange',
     DOMCONTENTLOADED = 'DOMContentLoaded',
     SECRET = '__IE8__' + Math.random(),
-    Object = window.Object,
+    // Object = window.Object,
     defineProperty = Object.defineProperty ||
     // just in case ...
     function (object, property, descriptor) {
@@ -18,7 +18,13 @@
     function (object, descriptors) {
       for(var key in descriptors) {
         if (hasOwnProperty.call(descriptors, key)) {
-          defineProperty(object, key, descriptors[key]);
+          try {
+            defineProperty(object, key, descriptors[key]);
+          } catch(o_O) {
+            if (window.console) {
+              console.log(key + ' failed on object:', object, o_O.message);
+            }
+          }
         }
       }
     },
@@ -131,6 +137,12 @@
     return self.nodeType !== 9 && document.documentElement.contains(self);
   }
 
+  function onkeyup(e) {
+    var evt = document.createEvent('Event');
+    evt.initEvent('input', true, true);
+    (e.srcElement || e.fromElement || document).dispatchEvent(evt);
+  }
+
   function onReadyState(e) {
     if (!READYEVENTDISPATCHED && readyStateOK.test(
       document.readyState
@@ -235,6 +247,20 @@
             i--;
           ) {
             if (childNodes[i].nodeType == 1) return childNodes[i];
+          }
+        }
+      },
+      oninput: {
+        get: function () {
+          return this._oninput || null;
+        },
+        set: function (oninput) {
+          if (this._oninput) {
+            this.removeEventListener('input', this._oninput);
+            this._oninput = oninput;
+            if (oninput) {
+              this.addEventListener('input', oninput);
+            }
           }
         }
       },
@@ -344,6 +370,9 @@
         }
         if (find(handlers, handler) < 0) {
           handlers[capture ? 'unshift' : 'push'](handler);
+        }
+        if (type === 'input') {
+          self.attachEvent('onkeyup', onkeyup);
         }
       }},
       dispatchEvent: {value: function (e) {
@@ -473,6 +502,11 @@
   defineProperties(
     window.HTMLDocument.prototype,
     {
+      defaultView: {
+        get: function () {
+          return this.parentWindow;
+        }
+      },
       textContent: {
         get: function () {
           return this.nodeType === 11 ? getTextContent.call(this) : null;
