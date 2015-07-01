@@ -159,6 +159,12 @@ THE SOFTWARE.
     return self.nodeType !== 9 && document.documentElement.contains(self);
   }
 
+  function onkeyup(e) {
+    var evt = document.createEvent('Event');
+    evt.initEvent('input', true, true);
+    (e.srcElement || e.fromElement || document).dispatchEvent(evt);
+  }
+
   function onReadyState(e) {
     if (!READYEVENTDISPATCHED && readyStateOK.test(
       document.readyState
@@ -372,6 +378,9 @@ THE SOFTWARE.
         }
         if (find(handlers, handler) < 0) {
           handlers[capture ? 'unshift' : 'push'](handler);
+        }
+        if (type === 'input') {
+          self.attachEvent('onkeyup', onkeyup);
         }
       }},
       dispatchEvent: {value: function (e) {

@@ -347,6 +347,20 @@ wru.test([
     }
   },
   {
+    name: 'input event',
+    test: function () {
+      var firedAlready = false;
+      var input = document.createElement('input');
+      input.value = 'please write something in here';
+      input.addEventListener('input', wru.async(function(e){
+        e.preventDefault();
+        this.parentNode.removeChild(this);
+        wru.assert(e.type === 'input');
+      }));
+      document.body.appendChild(input);
+    }
+  },
+  {
     name: 'native focus',
     test: function () {
       var input = document.createElement('input');
