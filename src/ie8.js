@@ -414,6 +414,14 @@
     }
   );
 
+  defineProperties(HTMLSelectElement, {
+    value: {
+      get: function () {
+        return this.options[this.selectedIndex].value;
+      }
+    }
+  });
+
   // EventTarget methods for Text nodes too
   defineProperties(TextPrototype, {
     addEventListener: {value: ElementPrototype.addEventListener},
@@ -646,3 +654,9 @@
       }}
     }
   );
+
+  (function (styleSheets, HTML5Element, i) {
+    for (i = 0; i < HTML5Element.length; i++) document.createElement(HTML5Element[i]);
+    if (!styleSheets.length) document.createStyleSheet('');
+    styleSheets[0].addRule(HTML5Element.join(','), 'display:block;');
+  }(document.styleSheets, ['header', 'nav', 'section', 'article', 'aside', 'footer']));
