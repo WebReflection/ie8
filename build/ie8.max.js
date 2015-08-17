@@ -351,7 +351,7 @@ THE SOFTWARE.
           currentType.w = function (e) {
             // e[SECRET] is a silent notification needed to avoid
             // fired events during live test
-            return e[SECRET] || commonEventLoop(self, verify(self, e), handlers, false);
+            return e[SECRET] ? !(e.cancelBubble = true) : commonEventLoop(self, verify(self, e), handlers, false);
           };
           // if not detected yet
           if (!hasOwnProperty.call(types, ontype)) {
