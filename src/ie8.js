@@ -323,13 +323,13 @@
                       )[SECRET],
           currentType = temple[ontype] || (temple[ontype] = {}),
           handlers  = currentType.h || (currentType.h = []),
-          e
+          e, attr
         ;
         if (!hasOwnProperty.call(currentType, 'w')) {
           currentType.w = function (e) {
             // e[SECRET] is a silent notification needed to avoid
             // fired events during live test
-            return e[SECRET] ? !(e.cancelBubble = true) : commonEventLoop(self, verify(self, e), handlers, false);
+            return e[SECRET] || commonEventLoop(self, verify(self, e), handlers, false);
           };
           // if not detected yet
           if (!hasOwnProperty.call(types, ontype)) {
@@ -350,6 +350,9 @@
                 if (self.nodeType != 9 && self.parentNode == null) {
                   div.appendChild(self);
                 }
+                if (attr = self.getAttribute(ontype)) {
+                  self.setAttribute(ontype, '');
+                }
                 self.fireEvent(ontype, e);
                 types[ontype] = true;
               } catch(e) {
@@ -357,6 +360,9 @@
                 while (div.hasChildNodes()) {
                   div.removeChild(div.firstChild);
                 }
+              }
+              if (attr) {
+                self.setAttribute(ontype, attr);
               }
             } else {
               // no need to bother since

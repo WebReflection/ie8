@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <!--[if lt IE 9]><script src="/build/ie8.max.js"></script><![endif]-->  
+</head>
+<body>
+    <form id="testForm" onsubmit="alert('submitted')" action="post.php">
+        <input type="text">
+        <button type="submit" value="submit">Submit</button>
+    </form>
+    <script type="text/javascript">
+        document.getElementById('testForm').addEventListener('submit',function(){});
+    </script>
+</body>
+</html>
