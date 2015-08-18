@@ -60,7 +60,10 @@ THE SOFTWARE.
     // ^ actually could probably be just /^[a-z]+$/
     readyStateOK = /loaded|complete/,
     types = {},
-    div = document.createElement('div')
+    div = document.createElement('div'),
+    html = document.documentElement,
+    removeAttribute = html.removeAttribute,
+    setAttribute = html.setAttribute
   ;
 
   function commonEventLoop(currentTarget, e, $handlers, synthetic) {
@@ -156,7 +159,7 @@ THE SOFTWARE.
   }
 
   function live(self) {
-    return self.nodeType !== 9 && document.documentElement.contains(self);
+    return self.nodeType !== 9 && html.contains(self);
   }
 
   function onkeyup(e) {
@@ -373,7 +376,7 @@ THE SOFTWARE.
                   div.appendChild(self);
                 }
                 if (attr = self.getAttribute(ontype)) {
-                  self.setAttribute(ontype, '');
+                  removeAttribute.call(self, ontype);
                 }
                 self.fireEvent(ontype, e);
                 types[ontype] = true;
@@ -383,8 +386,8 @@ THE SOFTWARE.
                   div.removeChild(div.firstChild);
                 }
               }
-              if (attr) {
-                self.setAttribute(ontype, attr);
+              if (attr != null) {
+                setAttribute.call(self, ontype, attr);
               }
             } else {
               // no need to bother since
