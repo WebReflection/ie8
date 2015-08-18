@@ -2,7 +2,7 @@
   "name": "ie8",
   "repo": "WebReflection/ie8",
   "description": "some damn DOM fix for this damned browser",
-  "version": "0.2.7",
+  "version": "0.2.8",
   "keywords": [],
   "dependencies": {},
   "development": {},
