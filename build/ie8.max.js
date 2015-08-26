@@ -691,4 +691,4 @@ THE SOFTWARE.
     if (!styleSheets.length) document.createStyleSheet('');
     styleSheets[0].addRule(HTML5Element.join(','), 'display:block;');
   }(document.styleSheets, ['header', 'nav', 'section', 'article', 'aside', 'footer']));
-}(this));
+}(this.window || global));
