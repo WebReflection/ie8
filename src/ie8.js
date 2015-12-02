@@ -423,13 +423,15 @@
     }
   );
 
-  defineProperties(HTMLSelectElement, {
+  /* this is not needed in IE8
+  defineProperties(window.HTMLSelectElement.prototype, {
     value: {
       get: function () {
         return this.options[this.selectedIndex].value;
       }
     }
   });
+  //*/
 
   // EventTarget methods for Text nodes too
   defineProperties(TextPrototype, {

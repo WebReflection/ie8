@@ -492,7 +492,6 @@ wru.test([
     test: function () {
       var div = document.createElement('div');
       div.innerHTML = '<select><option selected value="abc">abc</option></select>';
-      alert(div.firstChild.value);
       wru.assert(div.firstChild.value === 'abc');
     }
   }, {
