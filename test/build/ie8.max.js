@@ -60,7 +60,10 @@ THE SOFTWARE.
     // ^ actually could probably be just /^[a-z]+$/
     readyStateOK = /loaded|complete/,
     types = {},
-    div = document.createElement('div')
+    div = document.createElement('div'),
+    html = document.documentElement,
+    removeAttribute = html.removeAttribute,
+    setAttribute = html.setAttribute
   ;
 
   function commonEventLoop(currentTarget, e, $handlers, synthetic) {
@@ -156,7 +159,7 @@ THE SOFTWARE.
   }
 
   function live(self) {
-    return self.nodeType !== 9 && document.documentElement.contains(self);
+    return self.nodeType !== 9 && html.contains(self);
   }
 
   function onkeyup(e) {
@@ -345,7 +348,7 @@ THE SOFTWARE.
                       )[SECRET],
           currentType = temple[ontype] || (temple[ontype] = {}),
           handlers  = currentType.h || (currentType.h = []),
-          e
+          e, attr
         ;
         if (!hasOwnProperty.call(currentType, 'w')) {
           currentType.w = function (e) {
@@ -372,6 +375,9 @@ THE SOFTWARE.
                 if (self.nodeType != 9 && self.parentNode == null) {
                   div.appendChild(self);
                 }
+                if (attr = self.getAttribute(ontype)) {
+                  removeAttribute.call(self, ontype);
+                }
                 self.fireEvent(ontype, e);
                 types[ontype] = true;
               } catch(e) {
@@ -379,6 +385,9 @@ THE SOFTWARE.
                 while (div.hasChildNodes()) {
                   div.removeChild(div.firstChild);
                 }
+              }
+              if (attr != null) {
+                setAttribute.call(self, ontype, attr);
               }
             } else {
               // no need to bother since
@@ -435,6 +444,16 @@ THE SOFTWARE.
       }}
     }
   );
+
+  /* this is not needed in IE8
+  defineProperties(window.HTMLSelectElement.prototype, {
+    value: {
+      get: function () {
+        return this.options[this.selectedIndex].value;
+      }
+    }
+  });
+  //*/
 
   // EventTarget methods for Text nodes too
   defineProperties(TextPrototype, {
@@ -668,4 +687,10 @@ THE SOFTWARE.
       }}
     }
   );
-}(this));
+
+  (function (styleSheets, HTML5Element, i) {
+    for (i = 0; i < HTML5Element.length; i++) document.createElement(HTML5Element[i]);
+    if (!styleSheets.length) document.createStyleSheet('');
+    styleSheets[0].addRule(HTML5Element.join(','), 'display:block;');
+  }(document.styleSheets, ['header', 'nav', 'section', 'article', 'aside', 'footer']));
+}(this.window || global));

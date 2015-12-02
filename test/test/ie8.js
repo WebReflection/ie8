@@ -487,6 +487,20 @@ wru.test([
       });
       xhr.send(null);
     }
+  }, {
+    name: 'select#value',
+    test: function () {
+      var div = document.createElement('div');
+      div.innerHTML = '<select><option selected value="abc">abc</option></select>';
+      wru.assert(div.firstChild.value === 'abc');
+    }
+  }, {
+    name: 'HTML5 elements',
+    test: function () {
+      var section = document.body.appendChild(document.createElement('section'));
+      wru.assert(getComputedStyle(section, null).getPropertyValue('display') === 'block');
+      section.parentNode.removeChild(section);
+    }
   }
 ]);
 
