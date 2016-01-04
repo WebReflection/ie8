@@ -372,11 +372,13 @@ THE SOFTWARE.
                 // document a part if a node has never been
                 // added to any other node, fireEvent might
                 // behave very weirdly (read: trigger unspecified errors)
-                if (self.nodeType != 9 && self.parentNode == null) {
-                  div.appendChild(self);
-                }
-                if (attr = self.getAttribute(ontype)) {
-                  removeAttribute.call(self, ontype);
+                if (self.nodeType != 9) {
+                  if (self.parentNode == null) {
+                    div.appendChild(self);
+                  }
+                  if (attr = self.getAttribute(ontype)) {
+                    removeAttribute.call(self, ontype);
+                  }
                 }
                 self.fireEvent(ontype, e);
                 types[ontype] = true;

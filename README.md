@@ -36,7 +36,7 @@ The file can be either the [full version](build/ie8.max.js) or [the minified one
 It is now possible to include this file through [cdnjs](http://www.cdnjs.com)
 ```html
 <!--[if IE 8]><script
-  src="//cdnjs.cloudflare.com/ajax/libs/ie8/0.2.10/ie8.js"
+  src="//cdnjs.cloudflare.com/ajax/libs/ie8/0.2.11/ie8.js"
 ></script><![endif]-->
 ```
 
