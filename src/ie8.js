@@ -316,6 +316,7 @@
       */
       // DOM Level 2 EventTarget methods and events
       addEventListener: {value: function (type, handler, capture) {
+        if (typeof handler !== 'function' && typeof handler !== 'object') return;
         var
           self = this,
           ontype = 'on' + type,
@@ -411,6 +412,7 @@
         )), !e.defaultPrevented;
       }},
       removeEventListener: {value: function (type, handler, capture) {
+        if (typeof handler !== 'function' && typeof handler !== 'object') return;
         var
           self = this,
           ontype = 'on' + type,
