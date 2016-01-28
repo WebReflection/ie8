@@ -57,7 +57,7 @@
         typeof handler.handleEvent === 'function'
       ) {
         handler.handleEvent(evt);
-      } else {
+      } else if (typeof handler.call === 'function') {
         handler.call(currentTarget, evt);
       }
       if (evt.stoppedImmediatePropagation) break;
