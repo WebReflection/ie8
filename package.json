@@ -22,5 +22,12 @@
   "main": "./build/ie8.max.js",
   "devDendencies": {
     "wru": ">= 0.0.0"
+  },
+  "devDependencies": {
+    "jshint": "^2.9.1",
+    "markdown": "^0.5.0",
+    "polpetta": "^0.3.10",
+    "uglify-js": "^2.6.1",
+    "wru": "^0.2.7"
   }
 }
