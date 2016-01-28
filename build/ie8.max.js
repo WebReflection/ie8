@@ -74,11 +74,10 @@ THE SOFTWARE.
       i = 0, length = handlers.length; i < length; i++
     ) {
       handler = handlers[i];
-      if (
-        typeof handler === 'object' &&
-        typeof handler.handleEvent === 'function'
-      ) {
-        handler.handleEvent(evt);
+      if (typeof handler === 'object') {
+        if (typeof handler.handleEvent === 'function') {
+          handler.handleEvent(evt);
+        }
       } else {
         handler.call(currentTarget, evt);
       }
