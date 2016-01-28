@@ -551,6 +551,7 @@
         ) {
           DUNNOABOUTDOMLOADED = false;
           self.attachEvent(ONREADYSTATECHANGE, onReadyState);
+          /* global top */
           if (window == top) {
             (function gonna(e){try{
               self.documentElement.doScroll('left');
