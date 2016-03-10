@@ -46,6 +46,7 @@
 
   function commonEventLoop(currentTarget, e, $handlers, synthetic) {
     for(var
+      handler,
       continuePropagation,
       handlers = $handlers.slice(),
       evt = enrich(e, currentTarget),
@@ -162,6 +163,7 @@
     while ((node = this.lastChild)) {
       this.removeChild(node);
     }
+    /*jshint eqnull:true */
     if (textContent != null) {
       this.appendChild(document.createTextNode(textContent));
     }
@@ -175,7 +177,7 @@
       e.target = e.srcElement || e.fromElement || document;
     }
     if (!e.timeStamp) {
-      e.timeStamp = (new Date).getTime();
+      e.timeStamp = (new Date()).getTime();
     }
     return e;
   }
@@ -351,16 +353,17 @@
                 // added to any other node, fireEvent might
                 // behave very weirdly (read: trigger unspecified errors)
                 if (self.nodeType != 9) {
+                  /*jshint eqnull:true */
                   if (self.parentNode == null) {
                     div.appendChild(self);
                   }
-                  if (attr = self.getAttribute(ontype)) {
+                  if ((attr = self.getAttribute(ontype))) {
                     removeAttribute.call(self, ontype);
                   }
                 }
                 self.fireEvent(ontype, e);
                 types[ontype] = true;
-              } catch(e) {
+              } catch(meh) {
                 types[ontype] = false;
                 while (div.hasChildNodes()) {
                   div.removeChild(div.firstChild);
@@ -375,7 +378,7 @@
               types[ontype] = false;
             }
           }
-          if (currentType.n = types[ontype]) {
+          if ((currentType.n = types[ontype])) {
             self.attachEvent(ontype, currentType.w);
           }
         }
@@ -553,6 +556,7 @@
         ) {
           DUNNOABOUTDOMLOADED = false;
           self.attachEvent(ONREADYSTATECHANGE, onReadyState);
+          /* global top */
           if (window == top) {
             (function gonna(e){try{
               self.documentElement.doScroll('left');
@@ -569,7 +573,7 @@
         var e;
         if (Class !== 'Event') throw new Error('unsupported ' + Class);
         e = document.createEventObject();
-        e.timeStamp = (new Date).getTime();
+        e.timeStamp = (new Date()).getTime();
         return e;
       }}
     }
@@ -618,6 +622,7 @@
               runtimeStyle.left = rtLeft;
             }
           }
+          /*jshint eqnull:true */
           return result == null ?
             result : ((result + '') || 'auto');
         };

@@ -36,7 +36,7 @@ The file can be either the [full version](build/ie8.max.js) or [the minified one
 It is now possible to include this file through [cdnjs](http://www.cdnjs.com)
 ```html
 <!--[if IE 8]><script
-  src="//cdnjs.cloudflare.com/ajax/libs/ie8/0.3.2/ie8.js"
+  src="//cdnjs.cloudflare.com/ajax/libs/ie8/0.3.3/ie8.js"
 ></script><![endif]-->
 ```
 
@@ -44,6 +44,12 @@ It is now possible to include this file through [cdnjs](http://www.cdnjs.com)
 This polyfill normalize the [EventTarget interface](http://www.w3.org/TR/DOM-Level-2-Events/events.html#Events-Registration-interfaces) for every node.
 
 This shim normalizes the DOM Level 2 [Event interface](http://www.w3.org/TR/DOM-Level-2-Events/events.html#Events-interface) too, adding an **extra** DOM Level 3 [.stopImmediatePropagation()](http://www.w3.org/TR/DOM-Level-3-Events/#events-event-type-stopImmediatePropagation) as bonus.
+
+
+#### W3C DOM Level.next
+If you'd like to upgrade even more IE8 capabilities, consider adding [dom4](https://github.com/WebReflection/dom4#dom4) polyfills **after** `ie8.js` file.
+
+That would provide enough horse-powers to hazard [CustomElement](https://github.com/WebReflection/document-register-element#document-register-element) polyfill on top.
 
 
 ### known gotchas
