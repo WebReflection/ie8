@@ -180,6 +180,27 @@ THE SOFTWARE.
     }
   }
 
+  function pageGetter(coord) {
+    var
+      Dir = (coord === 'X' ? 'Left' : 'Top'),
+      clientXY = 'client' + coord,
+      clientLR = 'client' + Dir,
+      scrollLR = 'scroll' + Dir,
+      secretXY = '_@' + clientXY
+    ;
+    return function get() {
+      /* jshint validthis:true */
+      return  this[secretXY] || (
+        this[secretXY] = (
+          this[clientXY] + (
+            html[scrollLR] || (document.body && document.body[scrollLR]) || 0
+          ) -
+          html[clientLR]
+        )
+      );
+    };
+  }
+
   function setTextContent(textContent) {
     var node;
     while ((node = this.lastChild)) {
@@ -542,7 +563,9 @@ THE SOFTWARE.
         if (!this.bubbles) {
           this.stopPropagation();
         }
-      }}
+      }},
+      pageX: {get: pageGetter('X')},
+      pageY: {get: pageGetter('Y')}
     }
   );
 
