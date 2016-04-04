@@ -134,6 +134,15 @@ THE SOFTWARE.
       // AT_TARGET : BUBBLING_PHASE
       e.target === e.currentTarget ? 2 : 3
     );
+    // for pageX/pageY
+    if (!e.pageX && e.clientX) {
+      var html = document.documentElement;
+      var body = document.body;
+      e.pageX = e.clientX + (html.scrollLeft || body && body.scrollLeft || 0);
+      e.pageX -= html.clientLeft || 0;
+      e.pageY = e.clientY + (html.scrollTop || body && body.scrollTop || 0);
+      e.pageY -= html.clientTop || 0;
+    }
     return e;
   }
 

@@ -1,7 +1,7 @@
 try {
   process.exit(0);
 } catch(node) {
-  
+
 }
 
 
@@ -72,7 +72,7 @@ wru.test([
           i;
       div.innerHTML = 'a<i>b</i>c<i>d</i>e<i>f</i>';
       i = div.getElementsByTagName('i')[1];
-      
+
       wru.assert(
         i.previousElementSibling.nodeName === 'I' &&
         i.previousElementSibling.textContent === 'b'
@@ -85,7 +85,7 @@ wru.test([
           i;
       div.innerHTML = 'a<i>b</i>c<i>d</i>e<i>f</i>';
       i = div.getElementsByTagName('i')[1];
-      
+
       wru.assert(
         i.nextElementSibling.nodeName === 'I' &&
         i.nextElementSibling.textContent === 'f'
@@ -96,7 +96,7 @@ wru.test([
     test: function () {
       var div = document.createElement('div');
       div.innerHTML = 'a<i>b</i>c<i>d</i>e<i>f</i>';
-      
+
       wru.assert(
         div.childElementCount ===
         div.getElementsByTagName('i').length
@@ -500,6 +500,24 @@ wru.test([
       var section = document.body.appendChild(document.createElement('section'));
       wru.assert(getComputedStyle(section, null).getPropertyValue('display') === 'block');
       section.parentNode.removeChild(section);
+    }
+  },
+  {
+    name: 'pageX, pageY propertyValue',
+    test: function () {
+      var a = document.createElement('a');
+      a.className = 'target';
+      a.href = 'javascript:(function(){window.Clicked=true}());';
+      a.innerHTML = 'please click here to go on with the test';
+      a.addEventListener('click', wru.async(function(e){
+        wru.assert(!isNaN(e.pageX));
+        wru.assert(!isNaN(e.pageY));
+        setTimeout(wru.async(function(){
+          wru.assert(true);
+          a.parentNode.removeChild(a);
+        }), 100);
+      }));
+      document.body.appendChild(a);
     }
   }
 ]);
