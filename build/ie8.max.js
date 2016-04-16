@@ -63,7 +63,15 @@ THE SOFTWARE.
     div = document.createElement('div'),
     html = document.documentElement,
     removeAttribute = html.removeAttribute,
-    setAttribute = html.setAttribute
+    setAttribute = html.setAttribute,
+    valueDesc = function (value) {
+      return {
+        enumerable: true,
+        writable: true,
+        configurable: true,
+        value: value
+      };
+    }
   ;
 
   function commonEventLoop(currentTarget, e, $handlers, synthetic) {
@@ -360,7 +368,7 @@ THE SOFTWARE.
       },
       */
       // DOM Level 2 EventTarget methods and events
-      addEventListener: {value: function (type, handler, capture) {
+      addEventListener: valueDesc(function (type, handler, capture) {
         if (typeof handler !== 'function' && typeof handler !== 'object') return;
         var
           self = this,
@@ -431,8 +439,8 @@ THE SOFTWARE.
         if (type === 'input') {
           self.attachEvent('onkeyup', onkeyup);
         }
-      }},
-      dispatchEvent: {value: function (e) {
+      }),
+      dispatchEvent: valueDesc(function (e) {
         var
           self = this,
           ontype = 'on' + e.type,
@@ -456,8 +464,8 @@ THE SOFTWARE.
             parentNode.dispatchEvent(e) :
             true
         )), !e.defaultPrevented;
-      }},
-      removeEventListener: {value: function (type, handler, capture) {
+      }),
+      removeEventListener: valueDesc(function (type, handler, capture) {
         if (typeof handler !== 'function' && typeof handler !== 'object') return;
         var
           self = this,
@@ -468,7 +476,7 @@ THE SOFTWARE.
           i = handlers ? find(handlers, handler) : -1
         ;
         if (-1 < i) handlers.splice(i, 1);
-      }}
+      })
     }
   );
 
@@ -484,15 +492,15 @@ THE SOFTWARE.
 
   // EventTarget methods for Text nodes too
   defineProperties(TextPrototype, {
-    addEventListener: {value: ElementPrototype.addEventListener},
-    dispatchEvent: {value: ElementPrototype.dispatchEvent},
-    removeEventListener: {value: ElementPrototype.removeEventListener}
+    addEventListener: valueDesc(ElementPrototype.addEventListener),
+    dispatchEvent: valueDesc(ElementPrototype.dispatchEvent),
+    removeEventListener: valueDesc(ElementPrototype.removeEventListener)
   });
 
   defineProperties(
     window.XMLHttpRequest.prototype,
     {
-      addEventListener: {value: function (type, handler, capture) {
+      addEventListener: valueDesc(function (type, handler, capture) {
         var
           self = this,
           ontype = 'on' + type,
@@ -513,8 +521,8 @@ THE SOFTWARE.
           }
           handlers[capture ? 'unshift' : 'push'](handler);
         }
-      }},
-      dispatchEvent: {value: function (e) {
+      }),
+      dispatchEvent: valueDesc(function (e) {
         var
           self = this,
           ontype = 'on' + e.type,
@@ -532,38 +540,38 @@ THE SOFTWARE.
               true
             )
         );
-      }},
-      removeEventListener: {value: ElementPrototype.removeEventListener}
+      }),
+      removeEventListener: valueDesc(ElementPrototype.removeEventListener)
     }
   );
 
   defineProperties(
     window.Event.prototype,
     {
-      bubbles: {value: true, writable: true},
-      cancelable: {value: true, writable: true},
-      preventDefault: {value: function () {
+      bubbles: valueDesc(true),
+      cancelable: valueDesc(true),
+      preventDefault: valueDesc(function () {
         if (this.cancelable) {
           this.defaultPrevented = true;
           this.returnValue = false;
         }
-      }},
-      stopPropagation: {value: function () {
+      }),
+      stopPropagation: valueDesc(function () {
         this.stoppedPropagation = true;
         this.cancelBubble = true;
-      }},
-      stopImmediatePropagation: {value: function () {
+      }),
+      stopImmediatePropagation: valueDesc(function () {
         this.stoppedImmediatePropagation = true;
         this.stopPropagation();
-      }},
-      initEvent: {value: function(type, bubbles, cancelable){
+      }),
+      initEvent: valueDesc(function(type, bubbles, cancelable){
         this.type = type;
         this.bubbles = !!bubbles;
         this.cancelable = !!cancelable;
         if (!this.bubbles) {
           this.stopPropagation();
         }
-      }},
+      }),
       pageX: {get: pageGetter('X')},
       pageY: {get: pageGetter('Y')}
     }
@@ -587,7 +595,7 @@ THE SOFTWARE.
           }
         }
       },
-      addEventListener: {value: function(type, handler, capture) {
+      addEventListener: valueDesc(function(type, handler, capture) {
         var self = this;
         ElementPrototype.addEventListener.call(self, type, handler, capture);
         // NOTE:  it won't fire if already loaded, this is NOT a $.ready() shim!
@@ -611,23 +619,23 @@ THE SOFTWARE.
             }}());
           }
         }
-      }},
-      dispatchEvent: {value: ElementPrototype.dispatchEvent},
-      removeEventListener: {value: ElementPrototype.removeEventListener},
-      createEvent: {value: function(Class){
+      }),
+      dispatchEvent: valueDesc(ElementPrototype.dispatchEvent),
+      removeEventListener: valueDesc(ElementPrototype.removeEventListener),
+      createEvent: valueDesc(function(Class){
         var e;
         if (Class !== 'Event') throw new Error('unsupported ' + Class);
         e = document.createEventObject();
         e.timeStamp = (new Date()).getTime();
         return e;
-      }}
+      })
     }
   );
 
   defineProperties(
     window.Window.prototype,
     {
-      getComputedStyle: {value: function(){
+      getComputedStyle: valueDesc(function(){
 
         var // partially grabbed from jQuery and Dean's hack
           notpixel = /^(?:[+-]?(?:\d*\.|)\d+(?:[eE][+-]?\d+|))(?!px)[a-z%]+$/,
@@ -684,9 +692,9 @@ THE SOFTWARE.
             new ComputedStyle(el);
         };
 
-      }()},
+      }()),
 
-      addEventListener: {value: function (type, handler, capture) {
+      addEventListener: valueDesc(function (type, handler, capture) {
         var
           self = window,
           ontype = 'on' + type,
@@ -703,19 +711,19 @@ THE SOFTWARE.
         if (find(handlers, handler) < 0) {
           handlers[capture ? 'unshift' : 'push'](handler);
         }
-      }},
-      dispatchEvent: {value: function (e) {
+      }),
+      dispatchEvent: valueDesc(function (e) {
         var method = window['on' + e.type];
         return method ? method.call(window, e) !== false && !e.defaultPrevented : true;
-      }},
-      removeEventListener: {value: function (type, handler, capture) {
+      }),
+      removeEventListener: valueDesc(function (type, handler, capture) {
         var
           ontype = 'on' + type,
           handlers = (window[ontype] || Object)[SECRET],
           i = handlers ? find(handlers, handler) : -1
          ;
         if (-1 < i) handlers.splice(i, 1);
-      }}
+      })
     }
   );
 
