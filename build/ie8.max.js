@@ -187,25 +187,10 @@ THE SOFTWARE.
       document.dispatchEvent(e);
     }
   }
-
-  function pageGetter(coord) {
-    var
-      Dir = (coord === 'X' ? 'Left' : 'Top'),
-      clientXY = 'client' + coord,
-      clientLR = 'client' + Dir,
-      scrollLR = 'scroll' + Dir,
-      secretXY = '_@' + clientXY
-    ;
-    return function get() {
-      /* jshint validthis:true */
-      return  this[secretXY] || (
-        this[secretXY] = (
-          this[clientXY] + (
-            html[scrollLR] || (document.body && document.body[scrollLR]) || 0
-          ) -
-          html[clientLR]
-        )
-      );
+  
+  function getter(attr) {
+    return function() {
+      return html[attr] || (document.body && document.body[attr]) || 0;
     };
   }
 
@@ -545,6 +530,7 @@ THE SOFTWARE.
     }
   );
 
+  var buttonGetter = getOwnPropertyDescriptor(Event.prototype, 'button').get;
   defineProperties(
     window.Event.prototype,
     {
@@ -572,8 +558,15 @@ THE SOFTWARE.
           this.stopPropagation();
         }
       }),
-      pageX: {get: pageGetter('X')},
-      pageY: {get: pageGetter('Y')}
+      pageX: {get: function(){ return this._pageX || (this._pageX = this.clientX + window.scrollX - (html.clientLeft || 0)); }},
+      pageY: {get: function(){ return this._pageY || (this._pageY = this.clientY + window.scrollY - (html.clientTop || 0)); }},
+      which: {get: function(){ return this.keyCode ? this.keyCode : (isNaN(this.button) ? undefined : this.button + 1); }},
+      charCode: {get: function(){ return (this.keyCode && this.type == 'keypress') ? this.keyCode : 0; }},
+      buttons: {get: function(){ return buttonGetter.call(this); }},
+      button: {get: function() {
+        var buttons = this.buttons;
+        return (buttons & 1 ? 0 : (buttons & 2 ? 2 : (buttons & 4 ? 1 : undefined)));
+      }}
     }
   );
 
@@ -723,7 +716,13 @@ THE SOFTWARE.
           i = handlers ? find(handlers, handler) : -1
          ;
         if (-1 < i) handlers.splice(i, 1);
-      })
+      }),
+      pageXOffset: {get: getter('scrollLeft')},
+      pageYOffset: {get: getter('scrollTop')},
+      scrollX: {get: getter('scrollLeft')},
+      scrollY: {get: getter('scrollTop')},
+      innerWidth: {get: getter('clientWidth')},
+      innerHeight: {get: getter('clientHeight')}
     }
   );
 

@@ -508,7 +508,7 @@
     }
   );
 
-  var buttonDesc = getOwnPropertyDescriptor(Event.prototype, 'button');
+  var buttonGetter = getOwnPropertyDescriptor(Event.prototype, 'button').get;
   defineProperties(
     window.Event.prototype,
     {
@@ -540,7 +540,7 @@
       pageY: {get: function(){ return this._pageY || (this._pageY = this.clientY + window.scrollY - (html.clientTop || 0)); }},
       which: {get: function(){ return this.keyCode ? this.keyCode : (isNaN(this.button) ? undefined : this.button + 1); }},
       charCode: {get: function(){ return (this.keyCode && this.type == 'keypress') ? this.keyCode : 0; }},
-      buttons: {get: function(){ return buttonDesc.get.call(this); }},
+      buttons: {get: function(){ return buttonGetter.call(this); }},
       button: {get: function() {
         var buttons = this.buttons;
         return (buttons & 1 ? 0 : (buttons & 2 ? 2 : (buttons & 4 ? 1 : undefined)));

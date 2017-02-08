@@ -15,8 +15,7 @@ wru.createEvent = function(type, bubbles, cancelable) {
   return e;
 };
 
-wru.test([
-  {
+wru.test([{
     name: 'getComputedStyle',
     test: function () {
       var div = document.createElement('div');
@@ -30,8 +29,7 @@ wru.test([
       ));
       document.body.removeChild(div);
     }
-  },
-  {
+  }, {
     name: 'DOMContentLoaded',
     test: function () {
       var waitforit = wru.async(function () {
@@ -45,7 +43,7 @@ wru.test([
         }
       }());
     }
-  },{
+  }, {
     name: 'firstElementChild',
     test: function () {
       var div = document.createElement('div');
@@ -55,7 +53,7 @@ wru.test([
         div.firstElementChild.textContent === 'b'
       );
     }
-  },{
+  }, {
     name: 'lastElementChild',
     test: function () {
       var div = document.createElement('div');
@@ -65,7 +63,7 @@ wru.test([
         div.lastElementChild.textContent === 'd'
       );
     }
-  },{
+  }, {
     name: 'previousElementSibling',
     test: function () {
       var div = document.createElement('div'),
@@ -78,7 +76,7 @@ wru.test([
         i.previousElementSibling.textContent === 'b'
       );
     }
-  },{
+  }, {
     name: 'nextElementSibling',
     test: function () {
       var div = document.createElement('div'),
@@ -91,7 +89,7 @@ wru.test([
         i.nextElementSibling.textContent === 'f'
       );
     }
-  },{
+  }, {
     name: 'childElementCount',
     test: function () {
       var div = document.createElement('div');
@@ -102,7 +100,7 @@ wru.test([
         div.getElementsByTagName('i').length
       );
     }
-  },{
+  }, {
     name: 'off line synthetic events',
     test: function () {
       var div = document.createElement('div');
@@ -111,7 +109,7 @@ wru.test([
       }));
       div.dispatchEvent(wru.createEvent('click'));
     }
-  },{
+  }, {
     name: 'offlinse synthetic event MUST bubble',
     test: function () {
       var
@@ -131,7 +129,7 @@ wru.test([
       });
       subNode.dispatchEvent(wru.createEvent('click'));
     }
-  },{
+  }, {
     name: 'online synthetic event bubbling',
     test: function () {
       var
@@ -153,7 +151,7 @@ wru.test([
       document.body.appendChild(parentNode);
       subNode.dispatchEvent(wru.createEvent('click'));
     }
-  },{
+  }, {
     name: 'offlinse custom event MUST bubble',
     test: function () {
       var
@@ -173,7 +171,7 @@ wru.test([
       });
       subNode.dispatchEvent(wru.createEvent('x:click'));
     }
-  },{
+  }, {
     name: 'online custom event bubbling',
     test: function () {
       var
@@ -195,8 +193,141 @@ wru.test([
       document.body.appendChild(parentNode);
       subNode.dispatchEvent(wru.createEvent('x:click'));
     }
-  },
-  {
+  }, {
+    name: 'pageX, pageY and button propertyValues',
+    test: function () {
+      var a = document.createElement('a');
+      a.className = 'target';
+      a.addEventListener('mousedown', wru.async(function (e) {
+        e.preventDefault();
+        wru.assert('pageX is not NaN', !isNaN(e.pageX));
+        wru.assert('pageX is not NaN', !isNaN(e.pageY));
+        wru.assert('e.buttons is 1', e.buttons == 1);
+        wru.assert('e.button is 0', e.button == 0);
+        wru.assert('e.which is 1', e.which == 1);
+        a.parentNode.removeChild(a);
+      }));
+      a.href = '#';
+      a.innerHTML = 'please left click here to go on with the test';
+      document.body.appendChild(a);
+    }
+  }, {
+    name: 'charCode and which propertyValues',
+    test: function () {
+      var input = document.createElement('input');
+      input.className = 'target';
+      input.value = 'Please enter a lower "a" to continue: ';
+      input.addEventListener('keypress', wru.async(function (e) {
+        wru.assert('e.which === 97', e.which === 97);
+        wru.assert('e.charCode === 97', e.charCode === 97);
+        wru.assert(typeof e.button == 'undefined');
+        wru.assert(e.buttons === 0);
+        setTimeout(wru.async(function(){
+          wru.assert(true);
+          input.parentNode.removeChild(input);
+        }), 100);
+      }));
+      document.body.appendChild(input);
+    }
+  }, {
+    name: 'window propertyValues',
+    test: function () {
+      var html = document.documentElement;
+      wru.assert('pageXOffset == scrollLeft', window.pageXOffset === (window.scrollLeft || 0));
+      wru.assert('pageYOffset == scrollTop', window.pageYOffset === (window.scrollTop || 0));
+      wru.assert('scrollX == scrollLeft', window.scrollX === (window.scrollLeft || 0));
+      wru.assert('scrollY == scrollTop', window.scrollY === (window.scrollTop || 0));
+      wru.assert('innerWidth == clientWidth', window.innerWidth === html.clientWidth);
+      wru.assert('innerHeight == clientHeight', window.innerHeight === html.clientHeight);
+    }
+  }, {
+    name: 'native click & preventDefault',
+    test: function () {
+      var a = document.createElement('a');
+      window.Clicked = false;
+      a.className = 'target';
+      a.href = 'javascript:(function(){window.Clicked=true}());';
+      a.innerHTML = 'please click here to go on with the test';
+      a.addEventListener('click', wru.async(function(e){
+        e.preventDefault();
+        wru.assert('clicked');
+        setTimeout(wru.async(function(){
+          wru.assert('no click', !window.Clicked);
+          wru.assert('default prevented', e.defaultPrevented);
+          window.Clicked = undefined;
+          a.parentNode.removeChild(a);
+        }), 100);
+      }));
+      document.body.appendChild(a);
+    }
+  }, {
+    name: 'input event',
+    test: function () {
+      var firedAlready = false;
+      var input = document.createElement('input');
+      input.value = 'please write something in here';
+      input.addEventListener('input', wru.async(function(e){
+        e.preventDefault();
+        this.parentNode.removeChild(this);
+        wru.assert(e.type === 'input');
+      }));
+      document.body.appendChild(input);
+    }
+  }, {
+    name: 'native focus',
+    test: function () {
+      var input = document.createElement('input');
+      input.value = 'please focus this element';
+      input.addEventListener('focus', wru.async(function (e) {
+        this.removeEventListener(e.type, arguments.callee);
+        this.parentNode.removeChild(this);
+        wru.assert(true);
+      }));
+      document.body.appendChild(input);
+    }
+  }, {
+    name: 'native blur',
+    test: function () {
+      var input = document.createElement('input');
+      input.value = 'please blur this element';
+      input.addEventListener('blur', wru.async(function (e) {
+        this.removeEventListener(e.type, arguments.callee);
+        this.parentNode.removeChild(this);
+        wru.assert(true);
+      }));
+      document.body.appendChild(input).focus();
+    }
+  }, {
+    name: 'manual native focus',
+    test: function () {
+      var input = document.createElement('input');
+      input.value = 'waiting for focus';
+      input.addEventListener('focus', wru.async(function (e) {
+        this.removeEventListener(e.type, arguments.callee);
+        this.parentNode.removeChild(this);
+        wru.assert(true);
+      }));
+      document.body.appendChild(input);
+      setTimeout(function () {
+        input.focus();
+      }, 500);
+    }
+  }, {
+    name: 'manual native blur',
+    test: function () {
+      var input = document.createElement('input');
+      input.value = 'waiting for blur';
+      input.addEventListener('blur', wru.async(function (e) {
+        this.removeEventListener(e.type, arguments.callee);
+        this.parentNode.removeChild(this);
+        wru.assert(true);
+      }));
+      document.body.appendChild(input).focus();
+      setTimeout(function () {
+        input.blur();
+      }, 500);
+    }
+  }, {
     name: 'stopPropagation',
     test: function () {
       var
@@ -219,7 +350,7 @@ wru.test([
       document.body.appendChild(parentNode);
       subNode.dispatchEvent(wru.createEvent('click'));
     }
-  },{
+  }, {
     name: 'native & stopImmediatePropagation',
     test: function () {
       // TODO: verify why "click" here might cause problems ...
@@ -252,7 +383,7 @@ wru.test([
       div.dispatchEvent(wru.createEvent('what:ever'));
       wru.assert('only once', counter === 1);
     }
-  },{
+  }, {
     name: 'custom & preventDefault',
     test: function () {
       var div = document.createElement('div'),
@@ -264,8 +395,7 @@ wru.test([
       div.dispatchEvent(wru.createEvent('x:prevent'));
       wru.assert('default prevented', e.defaultPrevented);
     }
-  },
-  {
+  }, {
     name: 'manual native click',
     test: function () {
       var a = document.createElement('a');
@@ -286,8 +416,7 @@ wru.test([
         a.click();
       }, 500);
     }
-  },
-  {
+  }, {
     name: 'manual dispatched focus',
     test: function () {
       var input = document.createElement('input');
@@ -302,8 +431,7 @@ wru.test([
         input.dispatchEvent(wru.createEvent('focus'));
       }, 500);
     }
-  },
-  {
+  }, {
     name: 'manual dispatched blur',
     test: function () {
       var alreadyBlurred = false,
@@ -324,101 +452,7 @@ wru.test([
         input.dispatchEvent(wru.createEvent('blur'));
       }, 500);
     }
-  },
-  {
-    name: 'native click & preventDefault',
-    test: function () {
-      var a = document.createElement('a');
-      window.Clicked = false;
-      a.className = 'target';
-      a.href = 'javascript:(function(){window.Clicked=true}());';
-      a.innerHTML = 'please click here to go on with the test';
-      a.addEventListener('click', wru.async(function(e){
-        e.preventDefault();
-        wru.assert('clicked');
-        setTimeout(wru.async(function(){
-          wru.assert('no click', !window.Clicked);
-          wru.assert('default prevented', e.defaultPrevented);
-          window.Clicked = undefined;
-          a.parentNode.removeChild(a);
-        }), 100);
-      }));
-      document.body.appendChild(a);
-    }
-  },
-  {
-    name: 'input event',
-    test: function () {
-      var firedAlready = false;
-      var input = document.createElement('input');
-      input.value = 'please write something in here';
-      input.addEventListener('input', wru.async(function(e){
-        e.preventDefault();
-        this.parentNode.removeChild(this);
-        wru.assert(e.type === 'input');
-      }));
-      document.body.appendChild(input);
-    }
-  },
-  {
-    name: 'native focus',
-    test: function () {
-      var input = document.createElement('input');
-      input.value = 'please focus this element';
-      input.addEventListener('focus', wru.async(function (e) {
-        this.removeEventListener(e.type, arguments.callee);
-        this.parentNode.removeChild(this);
-        wru.assert(true);
-      }));
-      document.body.appendChild(input);
-    }
-  },{
-    name: 'native blur',
-    test: function () {
-      var input = document.createElement('input');
-      input.value = 'please blur this element';
-      input.addEventListener('blur', wru.async(function (e) {
-        this.removeEventListener(e.type, arguments.callee);
-        this.parentNode.removeChild(this);
-        wru.assert(true);
-      }));
-      document.body.appendChild(input).focus();
-    }
-  }
-  ,
-  {
-    name: 'manual native focus',
-    test: function () {
-      var input = document.createElement('input');
-      input.value = 'waiting for focus';
-      input.addEventListener('focus', wru.async(function (e) {
-        this.removeEventListener(e.type, arguments.callee);
-        this.parentNode.removeChild(this);
-        wru.assert(true);
-      }));
-      document.body.appendChild(input);
-      setTimeout(function () {
-        input.focus();
-      }, 500);
-    }
-  }
-  ,
-  {
-    name: 'manual native blur',
-    test: function () {
-      var input = document.createElement('input');
-      input.value = 'waiting for blur';
-      input.addEventListener('blur', wru.async(function (e) {
-        this.removeEventListener(e.type, arguments.callee);
-        this.parentNode.removeChild(this);
-        wru.assert(true);
-      }));
-      document.body.appendChild(input).focus();
-      setTimeout(function () {
-        input.blur();
-      }, 500);
-    }
-  },{
+  }, {
     name: 'textContent - ElementPrototype',
     test: function () {
       var div = document.createElement('div');
@@ -427,7 +461,7 @@ wru.test([
       wru.assert('the content is right', div.innerHTML === 'abc');
       wru.assert('the content is returned', div.textContent === 'abc');
     }
-  },{
+  }, {
     name: 'textContent - HTMLCommentElement',
     test: function () {
       var div = document.createElement('div');
@@ -436,7 +470,7 @@ wru.test([
       div.childNodes[1].textContent = 'c';
       wru.assert('set', div.childNodes[1].textContent === 'c');
     }
-  },{
+  }, {
     name: 'textContent - HTMLScriptElement',
     test: function () {
       var div = document.createElement('div');
@@ -445,7 +479,7 @@ wru.test([
       div.childNodes[1].textContent = 'c';
       wru.assert('get', div.childNodes[1].textContent === 'c');
     }
-  },{
+  }, {
     name: 'textContent - HTMLStyleElement',
     test: function () {
       var div = document.createElement('div');
@@ -454,7 +488,7 @@ wru.test([
       div.childNodes[1].textContent = 'body{}';
       wru.assert('set', /^\s*body\s*\{\s*\}\s*$/i.test(div.childNodes[1].textContent));
     }
-  },{
+  }, {
     name: 'textContent - HTMLTitleElement',
     test: function () {
       var title = document.createElement('title');
@@ -463,7 +497,7 @@ wru.test([
       title.textContent = '&amp;';
       wru.assert('set', title.textContent === '&amp;');
     }
-  },{
+  }, {
     name: 'textContent - Document fragment',
     test: function () {
       var df = document.createDocumentFragment();
@@ -472,7 +506,7 @@ wru.test([
       df.textContent = 'b';
       wru.assert('set', df.textContent === 'b');
     }
-  },{
+  }, {
     name: 'XMLHttpRequest',
     test: function () {
       var xhr = new XMLHttpRequest,
@@ -503,4 +537,3 @@ wru.test([
     }
   }
 ]);
-
