@@ -702,7 +702,8 @@
         ;
         if (!self[ontype]) {
           self[ontype] = function(e) {
-            return commonEventLoop(self, verify(self, e), handlers, false);
+            var retval = commonEventLoop(self, verify(self, e), handlers, false);
+            return retval !== true ? retval : undefined;
           };
         }
         handlers = self[ontype][SECRET] || (
