@@ -1,5 +1,5 @@
 {
-  "version": "0.5.0",
+  "version": "0.6.0",
   "name": "ie8",
   "description": "some damn DOM fix for this damned browser",
   "homepage": "https://github.com/WebReflection/ie8",
