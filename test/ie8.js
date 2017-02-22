@@ -28,7 +28,9 @@ wru.test([{
       wru.assert('the amount is in pixels', /^\d+px$/.test(
         getComputedStyle(div, null).getPropertyValue('margin-top')
       ));
-      wru.assert(getComputedStyle(div, null).getPropertyValue('opacity') === '0.75');
+      wru.assert('the opacity is correct',
+        getComputedStyle(div, null).getPropertyValue('opacity') === '0.75'
+      );
       document.body.removeChild(div);
     }
   }, {

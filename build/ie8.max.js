@@ -259,6 +259,32 @@ THE SOFTWARE.
     }(getOwnPropertyDescriptor(window.CSSStyleSheet.prototype, 'cssText')))
   );
 
+  var opacityre = /\b\s*alpha\s*\(\s*opacity\s*=\s*(\d+)\s*\)/;
+  defineProperty(
+    window.CSSStyleDeclaration.prototype,
+    'opacity', {
+      get: function() {
+        var m = this.filter.match(opacityre);
+        return m ? (m[1] / 100).toString() : '';
+      },
+      set: function(value) {
+        this.zoom = 1;
+        var found = false;
+        if (value < 1) {
+          value = ' alpha(opacity=' + Math.round(value * 100) + ')';
+        }
+        else {
+          value = '';
+        }
+        this.filter = this.filter.replace(opacityre,
+                        function() { found = true; return value; });
+        if (!found && value) {
+          this.filter += value;
+        }
+      }
+    }
+  );
+
   defineProperties(
     ElementPrototype,
     {
@@ -653,6 +679,9 @@ THE SOFTWARE.
             left,
             rtLeft
           ;
+          if (name == 'opacity') {
+            return style.opacity || '1';
+          }
           name = (name === 'float' ? 'style-float' : name).replace(re, place);
           result = currentStyle ? currentStyle[name] : style[name];
           if (notpixel.test(result) && !position.test(name)) {
@@ -695,7 +724,7 @@ THE SOFTWARE.
         ;
         if (!self[ontype]) {
           self[ontype] = function(e) {
-            return commonEventLoop(self, verify(self, e), handlers, false);
+            return commonEventLoop(self, verify(self, e), handlers, false) && undefined;
           };
         }
         handlers = self[ontype][SECRET] || (
