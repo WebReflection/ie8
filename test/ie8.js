@@ -16,10 +16,11 @@ wru.createEvent = function(type, bubbles, cancelable) {
 };
 
 wru.test([{
-    name: 'getComputedStyle',
+    name: 'getComputedStyle and style.opacity',
     test: function () {
       var div = document.createElement('div');
       div.style.marginTop = '50%';
+      div.style.opacity = '0.75';
       document.body.insertBefore(
         div,
         document.body.firstChild
@@ -27,6 +28,7 @@ wru.test([{
       wru.assert('the amount is in pixels', /^\d+px$/.test(
         getComputedStyle(div, null).getPropertyValue('margin-top')
       ));
+      wru.assert(getComputedStyle(div, null).getPropertyValue('opacity') === '0.75');
       document.body.removeChild(div);
     }
   }, {
