@@ -702,7 +702,7 @@
         ;
         if (!self[ontype]) {
           self[ontype] = function(e) {
-            return commonEventLoop(self, verify(self, e), handlers, false);
+            return commonEventLoop(self, verify(self, e), handlers, false) && undefined;
           };
         }
         handlers = self[ontype][SECRET] || (
