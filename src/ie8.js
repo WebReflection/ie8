@@ -734,7 +734,6 @@
   );
 
   window.HTMLElement = window.Element;
-  window.Document = window.HTMLDocument;
 
   (function (styleSheets, HTML5Element, i) {
     for (i = 0; i < HTML5Element.length; i++) document.createElement(HTML5Element[i]);
