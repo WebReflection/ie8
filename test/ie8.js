@@ -548,5 +548,36 @@ wru.test([{
       wru.assert(getComputedStyle(section, null).getPropertyValue('display') === 'block');
       section.parentNode.removeChild(section);
     }
+  }, {
+    name: 'relatedTarget',
+    test: function () {
+      var box1 = document.createElement('div');
+      var box2 = document.createElement('div');
+      box1.style.padding = box2.style.padding = '30px 10px';
+      box1.style.textAlign = box2.style.textAlign = 'center';
+      box1.style.color = box2.style.color = 'white';
+      box1.style.background = '#007eff';
+      box2.style.background = '#bf00ff';
+      box1.innerHTML = 'Move the cursor here';
+      box2.innerHTML = 'Move the cursor here. Don\'t touch any other area!';
+      box2.style.display = 'none';
+
+      box1.addEventListener('mouseover', function() {
+        box1.innerHTML = 'Move the cursor to the bottom area';
+        box2.style.display = '';
+      });
+      box1.addEventListener('mouseout', wru.async(function(event) {
+          wru.assert('mouseout', event.relatedTarget === box2);
+      }));
+      box2.addEventListener('mouseover', wru.async(function(event) {
+          wru.assert('mouseover', event.relatedTarget === box1);
+
+		  box1.parentNode.removeChild(box1);
+		  box2.parentNode.removeChild(box2);
+      }));
+
+      document.body.appendChild(box1);
+      document.body.appendChild(box2);
+    }
   }
 ]);

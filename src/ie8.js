@@ -578,10 +578,13 @@
       }},
       relatedTarget: {get: function() {
         var type = this.type;
-        if (type === "mouseover" || type === "mouseout") {
-            return (type === "mouseover") ? this.fromElement : this.toElement;
-        }
-        return null;
+        if (type === 'mouseover') {
+          return this.fromElement;
+        } else if (type === 'mouseout') {
+          return this.toElement;
+        } else {
+          return null;
+		}
       }}
     }
   );
