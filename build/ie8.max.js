@@ -564,7 +564,6 @@ THE SOFTWARE.
       cancelable: valueDesc(true),
       preventDefault: valueDesc(function () {
         if (this.cancelable) {
-          this.defaultPrevented = true;
           this.returnValue = false;
         }
       }),
