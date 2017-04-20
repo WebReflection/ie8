@@ -748,6 +748,8 @@
     }
   );
 
+  window.HTMLElement = window.Element;
+
   (function (styleSheets, HTML5Element, i) {
     for (i = 0; i < HTML5Element.length; i++) document.createElement(HTML5Element[i]);
     if (!styleSheets.length) document.createStyleSheet('');

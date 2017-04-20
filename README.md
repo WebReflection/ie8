@@ -1,6 +1,15 @@
 ie8
 ===
 
+### warning
+
+This is year 2017. IE8 was released in 2009. You should not support IE8 anymore.
+
+Not even transpilers support it. Be sure you actually really need this polyfill, testing your projects via real IE8 and not some IE11 emulator.
+
+**FYI** this repository is slowly going to die as it should be. If I were you, I wouldn't wait for updates here or waste time for this browser.
+
+
 ### in a nutshell
 
  * `addEventListener`, `removeEventListener`, and `dispatchEvent` for IE8 **including custom bubbling events**
@@ -10,6 +19,7 @@ ie8
  * `document.addEventListener('DOMContentLoaded', callback, false)` supported
  * `textContent`, `firstElementChild`, `lastElementChild`, `previousElementSibling`, `nextElementSibling`, `childElementCount`
  * `document.defaultView`, `window.getComputedStyle`
+ * `HTMLElement`
 
 [current tests file](test/ie8.js) and [live test page](http://webreflection.github.io/ie8/test/)
 
