@@ -247,26 +247,26 @@ wru.test([{
   }, {
     name: 'native click & preventDefault',
     test: function () {
-      var a = document.createElement('a');
       var span = document.createElement('span');
+      var a = document.createElement('a');
       window.Clicked = false;
       a.className = 'target';
       a.href = 'javascript:(function(){window.Clicked=true}());';
-      a.appendChild(span);
-      span.innerHTML = 'please click here to go on with the test';
-      a.addEventListener('click', wru.async(function(e){
+      a.innerHTML = 'please click here to go on with the test';
+      span.appendChild(a);
+      span.addEventListener('click', wru.async(function(e){
         wru.assert('default prevented (propagated event)', e.defaultPrevented);
+      }));
+      a.addEventListener('click', wru.async(function(e){
+        e.preventDefault();
+        wru.assert('default prevented (source event)', e.defaultPrevented);
         setTimeout(wru.async(function(){
           wru.assert('no click', !window.Clicked);
           window.Clicked = undefined;
-          a.parentNode.removeChild(a);
+          span.parentNode.removeChild(span);
         }), 100);
       }));
-      span.addEventListener('click', function(e){
-        e.preventDefault();
-        wru.assert('default prevented (source event)', e.defaultPrevented);
-      });
-      document.body.appendChild(a);
+      document.body.appendChild(span);
     }
   }, {
     name: 'input event',
