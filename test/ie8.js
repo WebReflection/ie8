@@ -579,5 +579,10 @@ wru.test([{
       document.body.appendChild(box1);
       document.body.appendChild(box2);
     }
+  }, {
+    name: 'HTMLElement',
+    test: function () {
+      wru.assert('type', typeof window.HTMLElement === 'object');
+    }
   }
 ]);
