@@ -247,22 +247,26 @@ wru.test([{
   }, {
     name: 'native click & preventDefault',
     test: function () {
+      var span = document.createElement('span');
       var a = document.createElement('a');
       window.Clicked = false;
       a.className = 'target';
       a.href = 'javascript:(function(){window.Clicked=true}());';
       a.innerHTML = 'please click here to go on with the test';
+      span.appendChild(a);
+      span.addEventListener('click', wru.async(function(e){
+        wru.assert('default prevented (propagated event)', e.defaultPrevented);
+      }));
       a.addEventListener('click', wru.async(function(e){
         e.preventDefault();
-        wru.assert('clicked');
+        wru.assert('default prevented (source event)', e.defaultPrevented);
         setTimeout(wru.async(function(){
           wru.assert('no click', !window.Clicked);
-          wru.assert('default prevented', e.defaultPrevented);
           window.Clicked = undefined;
-          a.parentNode.removeChild(a);
+          span.parentNode.removeChild(span);
         }), 100);
       }));
-      document.body.appendChild(a);
+      document.body.appendChild(span);
     }
   }, {
     name: 'input event',
@@ -391,12 +395,17 @@ wru.test([{
     name: 'custom & preventDefault',
     test: function () {
       var div = document.createElement('div'),
+          subdiv = document.createElement('div'),
           e;
+      div.appendChild(subdiv);
+      // Important to test propagated event default preventing
       div.addEventListener('x:prevent', function(evt) {
         e = evt;
-        e.preventDefault();
       });
-      div.dispatchEvent(wru.createEvent('x:prevent'));
+      subdiv.addEventListener('x:prevent', function(evt) {
+        evt.preventDefault();
+      });
+      subdiv.dispatchEvent(wru.createEvent('x:prevent', true));
       wru.assert('default prevented', e.defaultPrevented);
     }
   }, {
@@ -538,6 +547,42 @@ wru.test([{
       var section = document.body.appendChild(document.createElement('section'));
       wru.assert(getComputedStyle(section, null).getPropertyValue('display') === 'block');
       section.parentNode.removeChild(section);
+    }
+  }, {
+    name: 'relatedTarget',
+    test: function () {
+      var box1 = document.createElement('div');
+      var box2 = document.createElement('div');
+      box1.style.padding = box2.style.padding = '30px 10px';
+      box1.style.textAlign = box2.style.textAlign = 'center';
+      box1.style.color = box2.style.color = 'white';
+      box1.style.background = '#007eff';
+      box2.style.background = '#bf00ff';
+      box1.innerHTML = 'Move the cursor here';
+      box2.innerHTML = 'Move the cursor here. Don\'t touch any other area!';
+      box2.style.display = 'none';
+
+      box1.addEventListener('mouseover', function() {
+        box1.innerHTML = 'Move the cursor to the bottom area';
+        box2.style.display = '';
+      });
+      box1.addEventListener('mouseout', wru.async(function(event) {
+        wru.assert('mouseout', event.relatedTarget === box2);
+      }));
+      box2.addEventListener('mouseover', wru.async(function(event) {
+        wru.assert('mouseover', event.relatedTarget === box1);
+
+        box1.parentNode.removeChild(box1);
+        box2.parentNode.removeChild(box2);
+      }));
+
+      document.body.appendChild(box1);
+      document.body.appendChild(box2);
+    }
+  }, {
+    name: 'HTMLElement',
+    test: function () {
+      wru.assert('type', typeof window.HTMLElement === 'object');
     }
   }
 ]);

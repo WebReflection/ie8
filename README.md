@@ -13,13 +13,13 @@ Not even transpilers support it. Be sure you actually really need this polyfill,
 ### in a nutshell
 
  * `addEventListener`, `removeEventListener`, and `dispatchEvent` for IE8 **including custom bubbling events**
- * `timeStamp`, `cancelable`, `bubbles`, `target`, and `currentTarget` properties per each event
+ * `timeStamp`, `cancelable`, `bubbles`, `defaultPrevented`, `target`, `currentTarget` and `relatedTarget` properties per each event
  * `document.createEvent('Event')` standard API  with `e.initEvent(type, bubbles, cancelable)` supported too
  * `preventDefault()`, `stopPropagation()`, `stopImmediatePropagation()` working with both synthetic and real events
  * `document.addEventListener('DOMContentLoaded', callback, false)` supported
  * `textContent`, `firstElementChild`, `lastElementChild`, `previousElementSibling`, `nextElementSibling`, `childElementCount`
  * `document.defaultView`, `window.getComputedStyle`
- * `HTMLElement`, `Document`
+ * `HTMLElement`
 
 [current tests file](test/ie8.js) and [live test page](http://webreflection.github.io/ie8/test/)
 

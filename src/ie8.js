@@ -542,7 +542,6 @@
       cancelable: valueDesc(true),
       preventDefault: valueDesc(function () {
         if (this.cancelable) {
-          this.defaultPrevented = true;
           this.returnValue = false;
         }
       }),
@@ -570,6 +569,22 @@
       button: {get: function() {
         var buttons = this.buttons;
         return (buttons & 1 ? 0 : (buttons & 2 ? 2 : (buttons & 4 ? 1 : undefined)));
+      }},
+      defaultPrevented: {get: function() {
+        // if preventDefault() was never called, or returnValue not given a value
+        // then returnValue is undefined
+        var returnValue = this.returnValue, undef;
+        return !(returnValue === undef || returnValue);
+      }},
+      relatedTarget: {get: function() {
+        var type = this.type;
+        if (type === 'mouseover') {
+          return this.fromElement;
+        } else if (type === 'mouseout') {
+          return this.toElement;
+        } else {
+          return null;
+        }
       }}
     }
   );
