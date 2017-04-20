@@ -567,13 +567,13 @@ wru.test([{
         box2.style.display = '';
       });
       box1.addEventListener('mouseout', wru.async(function(event) {
-          wru.assert('mouseout', event.relatedTarget === box2);
+        wru.assert('mouseout', event.relatedTarget === box2);
       }));
       box2.addEventListener('mouseover', wru.async(function(event) {
-          wru.assert('mouseover', event.relatedTarget === box1);
+        wru.assert('mouseover', event.relatedTarget === box1);
 
-		  box1.parentNode.removeChild(box1);
-		  box2.parentNode.removeChild(box2);
+        box1.parentNode.removeChild(box1);
+        box2.parentNode.removeChild(box2);
       }));
 
       document.body.appendChild(box1);

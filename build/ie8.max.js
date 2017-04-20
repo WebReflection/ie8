@@ -606,7 +606,7 @@ THE SOFTWARE.
           return this.toElement;
         } else {
           return null;
-		}
+        }
       }}
     }
   );
