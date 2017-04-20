@@ -10,6 +10,7 @@ ie8
  * `document.addEventListener('DOMContentLoaded', callback, false)` supported
  * `textContent`, `firstElementChild`, `lastElementChild`, `previousElementSibling`, `nextElementSibling`, `childElementCount`
  * `document.defaultView`, `window.getComputedStyle`
+ * `HTMLElement`, `Document`
 
 [current tests file](test/ie8.js) and [live test page](http://webreflection.github.io/ie8/test/)
 
