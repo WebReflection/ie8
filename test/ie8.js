@@ -248,20 +248,24 @@ wru.test([{
     name: 'native click & preventDefault',
     test: function () {
       var a = document.createElement('a');
+      var span = document.createElement('span');
       window.Clicked = false;
       a.className = 'target';
       a.href = 'javascript:(function(){window.Clicked=true}());';
-      a.innerHTML = 'please click here to go on with the test';
+      a.appendChild(span);
+      span.innerHTML = 'please click here to go on with the test';
       a.addEventListener('click', wru.async(function(e){
-        e.preventDefault();
-        wru.assert('clicked');
+        wru.assert('default prevented (propagated event)', e.defaultPrevented);
         setTimeout(wru.async(function(){
           wru.assert('no click', !window.Clicked);
-          wru.assert('default prevented', e.defaultPrevented);
           window.Clicked = undefined;
           a.parentNode.removeChild(a);
         }), 100);
       }));
+      span.addEventListener('click', function(e){
+        e.preventDefault();
+        wru.assert('default prevented (source event)', e.defaultPrevented);
+      });
       document.body.appendChild(a);
     }
   }, {
@@ -391,12 +395,17 @@ wru.test([{
     name: 'custom & preventDefault',
     test: function () {
       var div = document.createElement('div'),
+          subdiv = document.createElement('div'),
           e;
+      div.appendChild(subdiv);
+      // Important to test propagated event default preventing
       div.addEventListener('x:prevent', function(evt) {
         e = evt;
-        e.preventDefault();
       });
-      div.dispatchEvent(wru.createEvent('x:prevent'));
+      subdiv.addEventListener('x:prevent', function(evt) {
+        evt.preventDefault();
+      });
+      subdiv.dispatchEvent(wru.createEvent('x:prevent', true));
       wru.assert('default prevented', e.defaultPrevented);
     }
   }, {
