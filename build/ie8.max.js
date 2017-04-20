@@ -592,6 +592,19 @@ THE SOFTWARE.
       button: {get: function() {
         var buttons = this.buttons;
         return (buttons & 1 ? 0 : (buttons & 2 ? 2 : (buttons & 4 ? 1 : undefined)));
+      }},
+      defaultPrevented: {get: function() {
+        // if preventDefault() was never called, or returnValue not given a value
+        // then returnValue is undefined
+        var returnValue = this.returnValue, undef;
+        return !(returnValue === undef || returnValue);
+      }},
+      relatedTarget: {get: function() {
+        var type = this.type;
+        if (type === "mouseover" || type === "mouseout") {
+            return (type === "mouseover") ? this.fromElement : this.toElement;
+        }
+        return null;
       }}
     }
   );
