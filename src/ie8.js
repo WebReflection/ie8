@@ -60,7 +60,7 @@
       evt = enrich(e, currentTarget),
       i = 0, length = handlers.length; i < length; i++
     ) {
-      handler = handlers[i];
+      var handler = handlers[i];
       if (typeof handler === 'object') {
         if (typeof handler.handleEvent === 'function') {
           handler.handleEvent(evt);
