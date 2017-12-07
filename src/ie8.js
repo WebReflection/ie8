@@ -755,3 +755,74 @@
     if (!styleSheets.length) document.createStyleSheet('');
     styleSheets[0].addRule(HTML5Element.join(','), 'display:block;');
   }(document.styleSheets, ['header', 'nav', 'section', 'article', 'aside', 'footer']));
+
+  (function () {
+    if (document.createRange) return;
+    document.createRange = function createRange() {
+      return new Range();
+    };
+  
+    function getContents(start, end) {
+      var nodes = [start];
+      while (start !== end) {
+        nodes.push(start = start.nextSibling);
+      }
+      return nodes;
+    }
+  
+    function Range() {}
+    var proto = Range.prototype;
+    proto.cloneContents = function cloneContents() {
+      for (var
+        fragment = this._start.ownerDocument.createDocumentFragment(),
+        nodes = getContents(this._start, this._end),
+        i = 0,
+        length = nodes.length;
+        i < length; i++
+      ) {
+        fragment.appendChild(nodes[i].cloneNode(true));
+      }
+      return fragment;
+    };
+    proto.cloneRange = function cloneRange() {
+      var range = new Range();
+      range._start = this._start;
+      range._end = this._end;
+      return range;
+    };
+    proto.deleteContents = function deleteContents() {
+      for (var
+        parentNode = this._start.parentNode,
+        nodes = getContents(this._start, this._end),
+        i = 0,
+        length = nodes.length;
+        i < length; i++
+      ) {
+        parentNode.removeChild(nodes[i]);
+      }
+    };
+    proto.extractContents = function extractContents() {
+      for (var
+        fragment = this._start.ownerDocument.createDocumentFragment(),
+        nodes = getContents(this._start, this._end),
+        i = 0,
+        length = nodes.length;
+        i < length; i++
+      ) {
+        fragment.appendChild(nodes[i]);
+      }
+      return fragment;
+    };
+    proto.setEndAfter = function setEndAfter(node) {
+      this._end = node;
+    };
+    proto.setEndBefore = function setEndBefore(node) {
+      this._end = node.previousSibling;
+    };
+    proto.setStartAfter = function setStartAfter(node) {
+      this._start = node.nextSibling;
+    };
+    proto.setStartBefore = function setStartBefore(node) {
+      this._start = node;
+    };
+  }());

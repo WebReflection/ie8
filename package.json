@@ -21,7 +21,7 @@
   },
   "main": "./build/ie8.max.js",
   "devDependencies": {
-    "jshint": "^2.9.1",
+    "jshint": "^2.9.5",
     "markdown": "^0.5.0",
     "tiny-cdn": "^0.5.2",
     "uglify-js": "^1.3.5",
