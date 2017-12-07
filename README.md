@@ -20,6 +20,7 @@ Not even transpilers support it. Be sure you actually really need this polyfill,
  * `textContent`, `firstElementChild`, `lastElementChild`, `previousElementSibling`, `nextElementSibling`, `childElementCount`
  * `document.defaultView`, `window.getComputedStyle`
  * `HTMLElement`
+ * basic support for DOM Ranges mutations
 
 [current tests file](test/ie8.js) and [live test page](http://webreflection.github.io/ie8/test/)
 
@@ -46,7 +47,7 @@ The file can be either the [full version](build/ie8.max.js) or [the minified one
 It is now possible to include this file through [cdnjs](http://www.cdnjs.com)
 ```html
 <!--[if IE 8]><script
-  src="//cdnjs.cloudflare.com/ajax/libs/ie8/0.6.0/ie8.js"
+  src="//cdnjs.cloudflare.com/ajax/libs/ie8/0.8.0/ie8.js"
 ></script><![endif]-->
 ```
 
