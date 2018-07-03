@@ -19,6 +19,7 @@
     "type": "git",
     "url": "git://github.com/WebReflection/ie8.git"
   },
+  "unpkg": "./build/ie8.js",
   "main": "./build/ie8.max.js",
   "devDependencies": {
     "jshint": "^2.9.5",
